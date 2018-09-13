@@ -9,7 +9,7 @@ This is a [proof-of-concept application](https://en.wikipedia.org/wiki/Proof_of_
 
 CurrenctFair was decomposed into three core microservices. All of them are independently deployable applications, organized around certain business domains.
 
-<img width="880" alt="Functional Services" src="">
+<img width="880" alt="Functional Services" src="https://github.com/Zanoshky/CurrencyFair/blob/master/FunctionalServices.png">
 
 #### Message Consumption Service
 Contains general user input logic and validationof market trades.
