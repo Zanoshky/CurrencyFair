@@ -5,6 +5,10 @@
 
 This is a [proof-of-concept application](https://en.wikipedia.org/wiki/Proof_of_concept), which implements Market Trade Processor for company CurrencyFair interview process by using Spring Boot and Docker.
 
+# Prerequisites
+
+- Manually connect to MySQL Server and create database with name **currency_fair** with type: **utf8_unicode_ci**
+
 ## Functional Services
 
 CurrenctFair was decomposed into three core microservices. All of them are independently deployable applications, organized around certain business domains.
