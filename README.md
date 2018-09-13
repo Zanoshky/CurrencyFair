@@ -20,7 +20,7 @@ CurrenctFair was decomposed into three core microservices. All of them are indep
 {"userId": "134256", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "FR"}
 ```
 
-###$ Message Consumption Service API's
+#### Message Consumption Service API's
 Method	| Path	| Description	| User authenticated
 ------------- | ------------------------- | ------------- |:-------------:|
 GET	  | /api/trades	| Get all information about all trades            | ×
