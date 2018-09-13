@@ -11,15 +11,16 @@ CurrenctFair was decomposed into three core microservices. All of them are indep
 
 <img width="880" alt="Functional Services" src="https://github.com/Zanoshky/CurrencyFair/blob/master/FunctionalServices.png">
 
-#### Message Consumption Service
-Exposes an endpoint which consumes market messages.
-Contains general user input logic and validation.
-Trade messages are accepted by POST request on endpoint and acceptable in following JSON form:
+### Message Consumption Service
+- Exposes an endpoint which consumes market messages.
+- Contains general user input logic and validation.
+- Trade messages are acceptable in following JSON form:
 
 ```json
 {"userId": "134256", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "FR"}
 ```
 
+###$ Message Consumption Service API's
 Method	| Path	| Description	| User authenticated
 ------------- | ------------------------- | ------------- |:-------------:|
 GET	  | /api/trades	| Get all information about all trades            | ×
