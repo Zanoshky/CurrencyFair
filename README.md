@@ -18,6 +18,6 @@ Method	| Path	| Description	| User authenticated
 ------------- | ------------------------- | ------------- |:-------------:|
 GET	  | /api/trades	| Get all information about all trades            | ×
 GET	  | /api/volume-trades | Get only volume information about trades | ×
-POST	| /api/trade	| Post a trade to the Market Trade Processor      | ×
+POST	| /api/message	| Post a message to the Market Trade Processor      | ×
 
 

@@ -13,8 +13,8 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
-@Table(name = "trade")
-public class Trade implements Serializable {
+@Table(name = "message")
+public class Message implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,10 +46,10 @@ public class Trade implements Serializable {
     @Column(name = "originating_country")
     private String originatingCountry;
 
-    protected Trade() {
+    protected Message() {
     }
 
-    public Trade(
+    public Message(
             final String userId, final String currencyFrom, final String currencyTo, final Double amountSell, final Double amountBuy,
             final Double rate, final Date timePlaced,
             final String originatingCountry) {
@@ -101,7 +101,7 @@ public class Trade implements Serializable {
 
     @Override
     public String toString() {
-        return "Trade{" + "id=" + id + ", userId='" + userId + '\'' + ", originatedCountry='" + originatingCountry + '\'' + ", currencyFrom='"
+        return "Message{" + "id=" + id + ", userId='" + userId + '\'' + ", originatedCountry='" + originatingCountry + '\'' + ", currencyFrom='"
                 + currencyFrom + '\'' + ", currencyTo='" + currencyTo + '\'' + ", amountSell=" + amountSell + ", amountBuy=" + amountBuy + ", rate="
                 + rate + ", timePlaced=" + timePlaced + '}';
     }

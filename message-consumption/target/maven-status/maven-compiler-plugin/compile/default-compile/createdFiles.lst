@@ -1,0 +1,5 @@
+com\zanoshky\currencyfair\CurrencyFairApplication.class
+com\zanoshky\currencyfair\controller\TradeController.class
+com\zanoshky\currencyfair\exception\ResourceNotFoundException.class
+com\zanoshky\currencyfair\repository\TradeRepository.class
+com\zanoshky\currencyfair\model\Trade.class
