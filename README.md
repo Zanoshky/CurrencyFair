@@ -27,8 +27,8 @@ CurrenctFair was decomposed into three core microservices. All of them are indep
 #### Message Consumption Service API's
 Method	| Path	| Description	| User authenticated
 ------------- | ------------------------- | ------------- |:-------------:|
-GET	  | /api/trades	| Get all information about all trades            | ×
-GET	  | /api/volume-trades | Get only volume information about trades | ×
-POST	| /api/message	| Post a message to the Market Trade Processor      | ×
+GET	  | /api/messages	| Get all information about all messages            | ×
+GET	  | /api/volume-messages | Get only volume information about trades   | ×
+POST	| /api/trade	| Post a trade to the Market Trade Processor          | ×
 
 
