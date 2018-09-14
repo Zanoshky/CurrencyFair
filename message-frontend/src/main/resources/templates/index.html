@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <title></title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"></link>
+    <link rel="stylesheet" href="/css/userCSS.css"></link>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <a class="navbar-brand" href="#">CurrencyFair</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="line">Line Chart</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="bar">Bar Chart</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="refreshCharts">Refresh</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="jumbotron">
+    <div class="container">
+        <!-- HOTFIX: Prevent navbar from overlapping the charts -->
+    </div>
+</div>
+
+<div id="parentDiv">
+</div>
+
+<script type="text/javascript" src="/js/jquery-1.12.0.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/Chart.min.js"></script>
+<script type="text/javascript" src="/js/getChartData.js"></script>
+<script type="text/javascript">
+	userScript.getChartData();
+</script>
+</body>
+</html>

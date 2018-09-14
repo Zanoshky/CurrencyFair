@@ -1,11 +1,12 @@
 package com.zanoshky.currencyfair.repository;
 
-import com.zanoshky.currencyfair.model.Message;
-import com.zanoshky.currencyfair.model.VolumeMessage;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
+import com.zanoshky.currencyfair.common.model.VolumeMessage;
+import com.zanoshky.currencyfair.model.Message;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
 

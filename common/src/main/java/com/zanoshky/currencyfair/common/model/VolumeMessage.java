@@ -1,4 +1,4 @@
-package com.zanoshky.currencyfair.model;
+package com.zanoshky.currencyfair.common.model;
 
 import java.util.Date;
 
