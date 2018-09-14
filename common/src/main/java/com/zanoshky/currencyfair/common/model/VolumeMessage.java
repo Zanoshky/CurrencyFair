@@ -1,6 +1,6 @@
 package com.zanoshky.currencyfair.common.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public interface VolumeMessage {
 
@@ -10,6 +10,6 @@ public interface VolumeMessage {
 
     String getCurrencyTo();
 
-    Date getTimePlaced();
+    LocalDateTime getTimePlaced();
 
 }
