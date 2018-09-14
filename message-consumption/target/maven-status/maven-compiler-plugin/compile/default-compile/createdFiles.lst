@@ -1,5 +1,0 @@
-com\zanoshky\currencyfair\model\Message.class
-com\zanoshky\currencyfair\MessageConsumptionApplication.class
-com\zanoshky\currencyfair\controller\MessageController.class
-com\zanoshky\currencyfair\exception\ResourceNotFoundException.class
-com\zanoshky\currencyfair\repository\MessageRepository.class
