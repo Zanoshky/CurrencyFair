@@ -1,16 +1,10 @@
 package com.zanoshky.currencyfair.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "message")
@@ -64,45 +58,45 @@ public class Message implements Serializable {
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public String getUserId() {
-        return userId;
+        return this.userId;
     }
 
     public String getCurrencyFrom() {
-        return currencyFrom;
+        return this.currencyFrom;
     }
 
     public String getCurrencyTo() {
-        return currencyTo;
+        return this.currencyTo;
     }
 
     public Double getAmountSell() {
-        return amountSell;
+        return this.amountSell;
     }
 
     public Double getAmountBuy() {
-        return amountBuy;
+        return this.amountBuy;
     }
 
     public Double getRate() {
-        return rate;
+        return this.rate;
     }
 
     public Date getTimePlaced() {
-        return timePlaced;
+        return this.timePlaced;
     }
 
     public String getOriginatingCountry() {
-        return originatingCountry;
+        return this.originatingCountry;
     }
 
     @Override
     public String toString() {
-        return "Message{" + "id=" + id + ", userId='" + userId + '\'' + ", originatedCountry='" + originatingCountry + '\'' + ", currencyFrom='"
-                + currencyFrom + '\'' + ", currencyTo='" + currencyTo + '\'' + ", amountSell=" + amountSell + ", amountBuy=" + amountBuy + ", rate="
-                + rate + ", timePlaced=" + timePlaced + '}';
+        return "Message{" + "id=" + this.id + ", userId='" + this.userId + '\'' + ", originatedCountry='" + this.originatingCountry + '\'' + ", currencyFrom='"
+                + this.currencyFrom + '\'' + ", currencyTo='" + this.currencyTo + '\'' + ", amountSell=" + this.amountSell + ", amountBuy=" + this.amountBuy + ", rate="
+                + this.rate + ", timePlaced=" + this.timePlaced + '}';
     }
 }

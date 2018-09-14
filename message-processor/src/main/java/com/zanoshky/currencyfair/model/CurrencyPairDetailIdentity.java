@@ -1,32 +1,32 @@
 package com.zanoshky.currencyfair.model;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
+@Embeddable
 public class CurrencyPairDetailIdentity implements Serializable {
 
-    @NotNull
-    @Size(min = 3, max = 3)
-    private String currencyFrom;
+    @Column(name = "time_id")
+    private LocalDateTime timeId;
 
-    @NotNull
-    @Size(min = 3, max = 3)
-    private String currencyTo;
+    @Column(name = "currency_pair_id")
+    private Long currencyPairId;
 
     protected CurrencyPairDetailIdentity() {
     }
 
-    public CurrencyPairDetailIdentity(@NotNull @Size(max = 3) String currencyFrom, @NotNull @Size(max = 3) String currencyTo) {
-        this.currencyFrom = currencyFrom;
-        this.currencyTo = currencyTo;
+    public CurrencyPairDetailIdentity(final LocalDateTime timeId, final Long currencyPair) {
+        this.timeId = timeId;
+        currencyPairId = currencyPair;
     }
 
-    public String getCurrencyFrom() {
-        return currencyFrom;
+    public LocalDateTime getTimeId() {
+        return timeId;
     }
 
-    public String getCurrencyTo() {
-        return currencyTo;
+    public Long getCurrencyPair() {
+        return currencyPairId;
     }
 }

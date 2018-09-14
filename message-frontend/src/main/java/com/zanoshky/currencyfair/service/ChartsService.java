@@ -1,15 +1,14 @@
 package com.zanoshky.currencyfair.service;
 
+import com.zanoshky.currencyfair.model.ChartsResponse;
+import com.zanoshky.currencyfair.model.Dataset;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.IntStream;
-
-import org.springframework.stereotype.Service;
-
-import com.zanoshky.currencyfair.model.ChartsResponse;
-import com.zanoshky.currencyfair.model.Dataset;
 
 @Service
 public class ChartsService {
