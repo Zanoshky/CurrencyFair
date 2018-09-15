@@ -1,6 +1,8 @@
 package com.zanoshky.currencyfair.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,6 +20,7 @@ public class Message implements Serializable {
     @Column(name = "user_id")
     private String userId;
 
+    @Length(min = 3, max = 3)
     @Column(name = "currency_from")
     private String currencyFrom;
 
@@ -40,13 +43,17 @@ public class Message implements Serializable {
     @Column(name = "originating_country")
     private String originatingCountry;
 
+    @JsonIgnore
+    @Column(name = "processed")
+    private boolean processed;
+
     protected Message() {
     }
 
     public Message(
             final String userId, final String currencyFrom, final String currencyTo, final Double amountSell, final Double amountBuy,
             final Double rate, final Date timePlaced,
-            final String originatingCountry) {
+            final String originatingCountry, final boolean processed) {
         this.userId = userId;
         this.currencyFrom = currencyFrom;
         this.currencyTo = currencyTo;
@@ -55,48 +62,62 @@ public class Message implements Serializable {
         this.rate = rate;
         this.timePlaced = timePlaced;
         this.originatingCountry = originatingCountry;
+        this.processed = processed;
     }
 
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     public String getUserId() {
-        return this.userId;
+        return userId;
     }
 
     public String getCurrencyFrom() {
-        return this.currencyFrom;
+        return currencyFrom;
     }
 
     public String getCurrencyTo() {
-        return this.currencyTo;
+        return currencyTo;
     }
 
     public Double getAmountSell() {
-        return this.amountSell;
+        return amountSell;
     }
 
     public Double getAmountBuy() {
-        return this.amountBuy;
+        return amountBuy;
     }
 
     public Double getRate() {
-        return this.rate;
+        return rate;
     }
 
     public Date getTimePlaced() {
-        return this.timePlaced;
+        return timePlaced;
     }
 
     public String getOriginatingCountry() {
-        return this.originatingCountry;
+        return originatingCountry;
+    }
+
+    public boolean isProcessed() {
+        return processed;
     }
 
     @Override
     public String toString() {
-        return "Message{" + "id=" + this.id + ", userId='" + this.userId + '\'' + ", originatedCountry='" + this.originatingCountry + '\'' + ", currencyFrom='"
-                + this.currencyFrom + '\'' + ", currencyTo='" + this.currencyTo + '\'' + ", amountSell=" + this.amountSell + ", amountBuy=" + this.amountBuy + ", rate="
-                + this.rate + ", timePlaced=" + this.timePlaced + '}';
+        return "Message{" +
+                "id=" + id +
+                ", userId='" + userId + '\'' +
+                ", currencyFrom='" + currencyFrom + '\'' +
+                ", currencyTo='" + currencyTo + '\'' +
+                ", amountSell=" + amountSell +
+                ", amountBuy=" + amountBuy +
+                ", rate=" + rate +
+                ", timePlaced=" + timePlaced +
+                ", originatingCountry='" + originatingCountry + '\'' +
+                ", processed=" + processed +
+                '}';
     }
 }

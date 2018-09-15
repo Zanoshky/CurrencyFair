@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS `currency_fair`.`currency_pair` (
 -- Table `currency_fair`.`currency_pair_detail`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `currency_fair`.`currency_pair_detail` (
+  `time_id` DATETIME NOT NULL,
   `currency_pair_id` INT UNSIGNED NOT NULL,
-  `time_id` TIMESTAMP NOT NULL,
   `count` INT NOT NULL,
   PRIMARY KEY (`currency_pair_id`, `time_id`),
   CONSTRAINT `fk_currency_pair_detail_currency_pair`

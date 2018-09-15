@@ -36,4 +36,12 @@ public class CurrencyPairDetail implements Serializable {
     public Long getCount() {
         return count;
     }
+
+    @Override
+    public String toString() {
+        return "CurrencyPairDetail{" +
+                "currencyPairDetailIdentity=" + currencyPairDetailIdentity +
+                ", count=" + count +
+                '}';
+    }
 }

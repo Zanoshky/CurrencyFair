@@ -8,6 +8,7 @@ import com.zanoshky.currencyfair.repository.CurrencyPairRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,6 +33,12 @@ public class CurrencyService {
     }
 
     public CurrencyPairDetail updateCurrencyPairDetail(final CurrencyPairDetail currencyPairDetail) {
-        return currencyPairDetailRepository. (currencyPairDetail);
+        return currencyPairDetailRepository.save(currencyPairDetail);
     }
+
+    public List<CurrencyPair> findAllExistingCurrencyPairs() {
+        return currencyPairRepository.findAll();
+    }
+
+
 }

@@ -18,17 +18,22 @@ public class MessageController {
 
     @GetMapping("/messages")
     public List<Message> getAllTrades() {
-        return this.messageRepository.findAll();
+        return messageRepository.findAll();
     }
 
     @GetMapping("/volume-messages")
     public List<VolumeMessage> getVolumeTrades() {
-        return this.messageRepository.findAllOnlyVolumeInfo();
+        return messageRepository.findAllOnlyVolumeInfo();
     }
 
-    @PostMapping("/trade")
+    @PostMapping("/message")
     public Message createTrade(@Valid @RequestBody final Message message) {
-        return this.messageRepository.save(message);
+        return messageRepository.save(message);
+    }
+
+    @PostMapping("/processed-messages")
+    public boolean markProcessedMessages(@Valid @RequestBody final List<Long> processedMessagesIdList) {
+        return true;
     }
 
 }

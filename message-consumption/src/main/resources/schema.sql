@@ -10,5 +10,6 @@ CREATE TABLE IF NOT EXISTS `currency_fair`.`message` (
   `amount_sell` DOUBLE(10,2) NOT NULL,
   `amount_buy` DOUBLE(10,2) NOT NULL,
   `rate` DOUBLE(10,5) NOT NULL,
-  `time_placed` TIMESTAMP NOT NULL,
+  `time_placed` DATETIME NOT NULL,
+  `processed` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`));

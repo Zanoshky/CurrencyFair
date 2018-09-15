@@ -21,19 +21,33 @@ public class VolumeMessageDto implements VolumeMessage {
         this.timePlaced = timePlaced;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public String getCurrencyFrom() {
         return currencyFrom;
     }
 
+    @Override
     public String getCurrencyTo() {
         return currencyTo;
     }
 
+    @Override
     public LocalDateTime getTimePlaced() {
         return timePlaced;
+    }
+
+    @Override
+    public String toString() {
+        return "VolumeMessageDto{" +
+                "id=" + id +
+                ", currencyFrom='" + currencyFrom + '\'' +
+                ", currencyTo='" + currencyTo + '\'' +
+                ", timePlaced=" + timePlaced +
+                '}';
     }
 }

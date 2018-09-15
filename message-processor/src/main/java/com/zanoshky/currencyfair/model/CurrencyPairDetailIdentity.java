@@ -29,4 +29,12 @@ public class CurrencyPairDetailIdentity implements Serializable {
     public Long getCurrencyPair() {
         return currencyPairId;
     }
+
+    @Override
+    public String toString() {
+        return "CurrencyPairDetailIdentity{" +
+                "timeId=" + timeId +
+                ", currencyPairId=" + currencyPairId +
+                '}';
+    }
 }

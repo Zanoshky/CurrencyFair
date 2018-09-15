@@ -43,17 +43,31 @@ public class ProcessorApplication {
 
     @PostConstruct
     private void init() {
-        loadCurrencyPairsFromDatabase();
+        loadCurrencyPairsFromDbIntoMap();
     }
 
-    private void loadCurrencyPairsFromDatabase() {
+    private void loadCurrencyPairsFromDbIntoMap() {
+        final List<CurrencyPair> currencyPairs = currencyService.findAllExistingCurrencyPairs();
 
+        for (final CurrencyPair pair : currencyPairs) {
+            final Map<String, CurrencyPair> existingMap = CURRENCY_PAIR_MAP.get(pair.getCurrencyFrom());
+
+            if (existingMap == null) {
+                createNewHashMapInMapAndAdd(pair.getCurrencyFrom(), pair.getCurrencyTo(), pair);
+            } else {
+                final CurrencyPair existingPair = CURRENCY_PAIR_MAP.get(pair.getCurrencyFrom()).get(pair.getCurrencyTo());
+
+                if (existingPair == null) {
+                    createNewEntryForMapAndAdd(pair.getCurrencyFrom(), pair.getCurrencyTo(), pair);
+                }
+            }
+        }
     }
 
     @Scheduled(fixedRate = 2000, initialDelay = 5000)
     private void downloadLatestVolumeMessages() {
         final List<VolumeMessageDto> volumeMessages = getLatestVolumeMessages();
-        final List<CurrencyPairDetail> processedMessages = processVolumeMessages(volumeMessages);
+        final List<Long> processedMessages = processVolumeMessages(volumeMessages);
 
         // TODO: Save Stats
         // TODO: Return response that they have been processed
@@ -74,31 +88,31 @@ public class ProcessorApplication {
         final Map<String, CurrencyPair> fromMap = CURRENCY_PAIR_MAP.get(currencyFrom);
 
         if (fromMap == null) {
-            createNewHashMapInMapAndAdd(currencyFrom, currencyTo);
+            final CurrencyPair currencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
+            createNewHashMapInMapAndAdd(currencyFrom, currencyTo, currencyPair);
         } else {
             final CurrencyPair currencyPair = CURRENCY_PAIR_MAP.get(currencyFrom).get(currencyTo);
 
             if (currencyPair == null) {
-                createNewEntryForMapAndAdd(currencyFrom, currencyTo);
+                final CurrencyPair createdCurrencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
+                createNewEntryForMapAndAdd(currencyFrom, currencyTo, createdCurrencyPair);
             }
         }
 
         return CURRENCY_PAIR_MAP.get(currencyFrom).get(currencyTo);
     }
 
-    private void createNewHashMapInMapAndAdd(final String currencyFrom, final String currencyTo) {
-        final CurrencyPair currencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
+    private void createNewHashMapInMapAndAdd(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
         CURRENCY_PAIR_MAP.put(currencyFrom, new HashMap<>());
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, currencyPair);
     }
 
-    private void createNewEntryForMapAndAdd(final String currencyFrom, final String currencyTo) {
-        final CurrencyPair createdCurrencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
+    private void createNewEntryForMapAndAdd(final String currencyFrom, final String currencyTo, final CurrencyPair createdCurrencyPair) {
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, createdCurrencyPair);
     }
 
-    private List<CurrencyPairDetail> processVolumeMessages(final List<VolumeMessageDto> volumeMessages) {
-        final List<CurrencyPairDetail> processedMessages = new ArrayList<>();
+    private List<Long> processVolumeMessages(final List<VolumeMessageDto> volumeMessages) {
+        final List<Long> processedMessages = new ArrayList<>();
 
         for (final VolumeMessageDto message : volumeMessages) {
             // Transform the message's time to floored value which will be used as key
@@ -109,24 +123,25 @@ public class ProcessorApplication {
             final Optional<CurrencyPairDetail> currencyPairDetail = currencyService.getCurrencyPairDetail(detailIdentity);
 
             if (currencyPairDetail.isPresent()) {
-                incrementExistingDetail(processedMessages, currencyPairDetail.get());
+                incrementExistingDetail(currencyPairDetail.get());
             } else {
-                createNewDetail(processedMessages, detailIdentity);
+                createNewDetail(detailIdentity);
             }
+
+            processedMessages.add(message.getId());
         }
 
         return processedMessages;
     }
 
-    private void createNewDetail(final List<CurrencyPairDetail> processedMessages, final CurrencyPairDetailIdentity detailIdentity) {
+    private void createNewDetail(final CurrencyPairDetailIdentity detailIdentity) {
         final CurrencyPairDetail detail = new CurrencyPairDetail(detailIdentity, 1L);
-        processedMessages.add(currencyService.createNewCurrencyPairDetail(detail));
+        currencyService.createNewCurrencyPairDetail(detail);
     }
 
-    private void incrementExistingDetail(final List<CurrencyPairDetail> processedMessages, final CurrencyPairDetail currencyPairDetail) {
-        currencyPairDetail.incrementCount();
-        currencyService.updateCurrencyPairDetail(currencyPairDetail);
-        processedMessages.add(currencyPairDetail);
+    private void incrementExistingDetail(final CurrencyPairDetail detail) {
+        detail.incrementCount();
+        currencyService.updateCurrencyPairDetail(detail);
     }
 
 }
