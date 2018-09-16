@@ -49,7 +49,6 @@ public class ChartsService {
 
         final List<Dataset> datasets = new ArrayList<>();
         datasets.add(createRandomDataset());
-        datasets.add(createRandomDataset());
 
         chartsResponse.setDatasets(datasets);
 

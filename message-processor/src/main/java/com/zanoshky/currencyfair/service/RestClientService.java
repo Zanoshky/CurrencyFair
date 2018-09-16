@@ -1,5 +1,6 @@
 package com.zanoshky.currencyfair.service;
 
+import com.zanoshky.currencyfair.common.model.VolumeMessage;
 import com.zanoshky.currencyfair.dto.VolumeMessageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class RestClientService {
     }
 
     /**
-     * Contacts message-consumption service by consuming API to GET all {@link com.zanoshky.currencyfair.common.model.VolumeMessage} which has not been processed.
+     * Contacts message-consumption service by consuming API to GET all {@link VolumeMessage} which has not been processed.
      *
      * @param lastProcessedId {@link String} value of ID from last processed ID by message-processor service
      * @return {@link List} of {@link VolumeMessageDto} which have not been processed by message-processor service.

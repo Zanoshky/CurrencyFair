@@ -1,4 +1,4 @@
-var userScript = (function() {
+var userScript = (function () {
     var chartData = [];
     var charts = [];
 
@@ -8,32 +8,22 @@ var userScript = (function() {
         maintainAspectRatio: true
     };
 
-    var prepareChartContext = function(canvasNode, chartdata) {
+    var prepareChartContext = function (canvasNode, chartdata) {
         var ctx = canvasNode[0].getContext("2d");
         ctx.canvas.width = "300";
         ctx.canvas.height = "300";
         var data = {
             labels: chartdata.labels,
             datasets: [{
-                    label: chartdata.datasets[0].name,
-                    fillColor: "rgba(209,17,65,0.1)",
-                    strokeColor: "rgba(209,17,65,1)",
-                    pointColor: "rgba(209,17,65,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(220,220,220,1)",
-                    data: chartdata.datasets[0].value
-                },
-                {
-                    label: chartdata.datasets[1].name,
-                    fillColor: "rgba(0,174,219,0.1)",
-                    strokeColor: "rgba(0,174,219,1)",
-                    pointColor: "rgba(0,174,219,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(220,220,220,1)",
-                    data: chartdata.datasets[1].value
-                }
+                label: chartdata.datasets[0].name,
+                fillColor: "rgba(209,17,65,0.1)",
+                strokeColor: "rgba(209,17,65,1)",
+                pointColor: "rgba(209,17,65,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: chartdata.datasets[0].value
+            }
             ]
         }
         return {
@@ -42,8 +32,7 @@ var userScript = (function() {
         }
     };
 
-
-    var createCanvasNode = function() {
+    var createCanvasNode = function () {
         var $div = $("<div>", {
             class: "col-8"
         });
@@ -63,18 +52,17 @@ var userScript = (function() {
         }
     };
 
-    var createContainerNode = function() {
+    var createContainerNode = function () {
         var $div = $("<div>", {
             class: "container"
         });
         return $div;
     };
 
-
-    var getChartData = function() {
+    var getChartData = function () {
         var endpoint = "/view-charts/";
         $.getJSON(endpoint)
-            .done(function(data) {
+            .done(function (data) {
                 var parentDiv = $("#parentDiv");
                 /* little housekeeping */
                 $(parentDiv).empty();
@@ -97,22 +85,23 @@ var userScript = (function() {
                         chartData[i] = prepareChartContext(canvasNode.canvasHandler, data[i]);
                         $($(canvasNode.canvasNodeHandler).find('span')).append(document.createTextNode(data[i].chartName));
                         $(containerNode).append(canvasNode.canvasNodeHandler);
-                    };
+                    }
+                    ;
                 }
 
-                $.each(chartData, function(index, value) {
+                $.each(chartData, function (index, value) {
                     charts[index] = new Chart(value.ctx).Bar(value.data, options);
                 });
 
             })
-            .fail(function(jqxhr, textStatus, error) {
+            .fail(function (jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " + err);
             });
     };
 
-    $("#line").click(function() {
-        $.each(chartData, function(index, value) {
+    $("#line").click(function () {
+        $.each(chartData, function (index, value) {
             /* destroy previous chart */
             if (charts[index] !== undefined || charts[index] !== null) {
                 charts[index].destroy();
@@ -122,8 +111,8 @@ var userScript = (function() {
         });
     });
 
-    $("#bar").click(function() {
-        $.each(chartData, function(index, value) {
+    $("#bar").click(function () {
+        $.each(chartData, function (index, value) {
 
             /* destroy previous chart */
             if (charts[index] !== undefined || charts[index] !== null) {
