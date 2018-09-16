@@ -12,10 +12,8 @@ import java.util.stream.Collectors;
 @Service
 public class RestClientService {
 
+    private static final String GET_URL_BY_ID = "http://localhost:8001/api/volume-messages/";
     private final RestTemplate restTemplate;
-
-    //web service resources endpoints
-    private final String GET_URL_BY_ID = "http://localhost:8001/api/volume-messages/";
 
     @Autowired
     public RestClientService(final RestTemplate restTemplate) {

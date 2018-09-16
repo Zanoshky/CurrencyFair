@@ -3,7 +3,13 @@ package com.zanoshky.currencyfair.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,6 +22,7 @@ public class Message implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @NotNull
     @Column(name = "user_id")
     private String userId;
 
@@ -23,6 +30,7 @@ public class Message implements Serializable {
     @Column(name = "currency_from")
     private String currencyFrom;
 
+    @Length(min = 3, max = 3)
     @Column(name = "currency_to")
     private String currencyTo;
 
@@ -48,7 +56,7 @@ public class Message implements Serializable {
     public Message(
             final String userId, final String currencyFrom, final String currencyTo, final Double amountSell, final Double amountBuy,
             final Double rate, final Date timePlaced,
-            final String originatingCountry, final boolean processed) {
+            final String originatingCountry) {
         this.userId = userId;
         this.currencyFrom = currencyFrom;
         this.currencyTo = currencyTo;
@@ -88,7 +96,7 @@ public class Message implements Serializable {
     }
 
     public Date getTimePlaced() {
-        return timePlaced;
+        return new Date(timePlaced.getTime());
     }
 
     public String getOriginatingCountry() {

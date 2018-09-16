@@ -19,22 +19,19 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
 @EnableScheduling
 public class ProcessorApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessorApplication.class);
+    private static final ConcurrentHashMap<String, ConcurrentHashMap<String, CurrencyPair>> CURRENCY_PAIR_MAP = new ConcurrentHashMap<>();
 
-    private static final String API_VOLUME_MESSAGES = "http://localhost:8001/api/volume-messages";
-
-    private static final Map<String, Map<String, CurrencyPair>> CURRENCY_PAIR_MAP = new HashMap<>();
-
-    private static String LAST_PROCESSED_ID = "0";
+    private static String lastProcessedId = "0";
 
     @Autowired
     private CurrencyService currencyService;
@@ -79,19 +76,19 @@ public class ProcessorApplication {
         LOGGER.info("LOADING existing CurrencyPairs into cache finished");
     }
 
-    @Scheduled(fixedRate = 10000, initialDelay = 10000)
+    @Scheduled(fixedRate = 60000, initialDelay = 10000)
     private void downloadLatestVolumeMessages() {
-        LOGGER.info("Requesting message-consumption to GET all new messages since ID: " + LAST_PROCESSED_ID);
-        final List<VolumeMessageDto> volumeMessages = restClientService.getAllUnprocessedVolumeMessages(LAST_PROCESSED_ID);
+        LOGGER.info("Requesting message-consumption to GET all new messages since ID: " + lastProcessedId);
+        final List<VolumeMessageDto> volumeMessages = restClientService.getAllUnprocessedVolumeMessages(lastProcessedId);
 
         if (volumeMessages.isEmpty()) {
             LOGGER.info("No new messages to process");
         } else {
-            final Long lastProcessedId = processVolumeMessages(volumeMessages);
+            final Long newLastId = processVolumeMessages(volumeMessages);
 
-            if (lastProcessedId != null) {
-                LAST_PROCESSED_ID = lastProcessedId.toString();
-                LOGGER.info("Last processed message is with it: " + LAST_PROCESSED_ID);
+            if (newLastId != null) {
+                lastProcessedId = newLastId.toString();
+                LOGGER.info("Last processed message is with ID: " + ProcessorApplication.lastProcessedId);
             }
         }
     }
@@ -115,7 +112,7 @@ public class ProcessorApplication {
     }
 
     private void createNewHashMapInMapAndAdd(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
-        CURRENCY_PAIR_MAP.put(currencyFrom, new HashMap<>());
+        CURRENCY_PAIR_MAP.put(currencyFrom, new ConcurrentHashMap<>());
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, currencyPair);
 
         LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");

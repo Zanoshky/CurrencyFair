@@ -80,11 +80,3 @@ Approach taken:
 
 Approach taken:
 - [x] Average : Render a graph of processed data from the messages consumed.
-
-----
-**TODO:**
-- **MTP-1**: Call a API processed-messages with JSON Payload of processed messages to message-consumption service
-- **MTP-2**: Process API call -> **MTP-1** -> by marking messages processed = 1 (true) in internal DB for every ID in JSON Payload.
-- **MTP-3**: Create API in message-processor to return all statistical data
-- **MTP-4**: Frontend work to consume statistical data API from message-processor -> **MTP-3**
- 
