@@ -14,7 +14,7 @@ CurrencyFair was decomposed into three core microservices. All of them are indep
 <img width="880" alt="Functional Services" src="https://github.com/Zanoshky/CurrencyFair/blob/master/documentation/FunctionalServices.png">
 
 ### Message Consumption Service
-- Service is using Java / Spring Boot / Tomcat
+- Service is using Java / Spring Boot / Tomcat.
 - Service is running on port 8001.
 - Client can POST a message to API endpoint with JSON Payload.
 - Service validates clients JSON Payload.
@@ -45,7 +45,7 @@ Approach taken:
 - [x] Easy : Consumed messages are written to disk for rendering in the frontend. 
 
 ### Message Processor Service
-- Service is using Java / Spring Boot / Tomcat
+- Service is using Java / Spring Boot / Tomcat.
 - Service is running on port 8002.
 - Internal intermediate microservice for communication between remaining microservices.
 - Service communicates with **Message-Consumer** to get filtered information about messages from its database.
@@ -67,13 +67,13 @@ Approach taken:
 #### Message Processor Service API's
 Method	| Path	| Description	| User authenticated
 ------- | ----- | ------------- |:----------------:|
-GET     | /api/statistics       | Returns all statistical information per minute | ×
+GET     | /api/currency-pair-details    | Returns all statistical information about currency pairs  | ×
 
 Approach taken:
 - [x] Average : Analyse incoming messages for trends, and transform data to prepare for a more visual frontend rendering, e.g. graphing currency volume of messages from one particular currency pair market (EUR/GBP).
 
 ### Message Frontend Service
-- Service is using Java / Spring Boot / Tomcat / ChartJS
+- Service is using Java / Spring Boot / Tomcat / ChartJS.
 - Service is running on port 8080.
 - Frontend microservice for communication between remaining microservices.
 - Service communicates with **Message-Processor** to get statistical information about messages from its database.

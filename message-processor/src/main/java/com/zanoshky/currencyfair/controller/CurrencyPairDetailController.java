@@ -1,4 +1,4 @@
-package com.zanoshky.currencyfair;
+package com.zanoshky.currencyfair.controller;
 
 
 import com.zanoshky.currencyfair.model.CurrencyPairDetail;
@@ -21,5 +21,5 @@ public class CurrencyPairDetailController {
     public List<CurrencyPairDetail> getAllTrades() {
         return currencyPairDetailRepository.findAll();
     }
-    
+
 }
