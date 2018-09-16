@@ -5,14 +5,13 @@ import com.zanoshky.currencyfair.model.CurrencyPair;
 import com.zanoshky.currencyfair.model.CurrencyPairDetail;
 import com.zanoshky.currencyfair.model.CurrencyPairDetailIdentity;
 import com.zanoshky.currencyfair.service.CurrencyService;
+import com.zanoshky.currencyfair.service.RestClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
@@ -20,7 +19,10 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @SpringBootApplication
 @EnableScheduling
@@ -29,16 +31,25 @@ public class ProcessorApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessorApplication.class);
 
     private static final String API_VOLUME_MESSAGES = "http://localhost:8001/api/volume-messages";
-    private static final RestTemplate REST_TEMPLATE = new RestTemplate();
 
     private static final Map<String, Map<String, CurrencyPair>> CURRENCY_PAIR_MAP = new HashMap<>();
 
+    private static String LAST_PROCESSED_ID = "0";
 
     @Autowired
     private CurrencyService currencyService;
 
+    @Autowired
+    private RestClientService restClientService;
+
     public static void main(final String[] args) {
         SpringApplication.run(ProcessorApplication.class, args);
+    }
+
+    // By defining a @Bean of RestTemplate, we make it available to the application context
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
     @PostConstruct
@@ -47,6 +58,8 @@ public class ProcessorApplication {
     }
 
     private void loadCurrencyPairsFromDbIntoMap() {
+        LOGGER.info("LOADING existing CurrencyPairs into cache");
+
         final List<CurrencyPair> currencyPairs = currencyService.findAllExistingCurrencyPairs();
 
         for (final CurrencyPair pair : currencyPairs) {
@@ -62,26 +75,25 @@ public class ProcessorApplication {
                 }
             }
         }
+
+        LOGGER.info("LOADING existing CurrencyPairs into cache finished");
     }
 
-    @Scheduled(fixedRate = 2000, initialDelay = 5000)
+    @Scheduled(fixedRate = 10000, initialDelay = 10000)
     private void downloadLatestVolumeMessages() {
-        final List<VolumeMessageDto> volumeMessages = getLatestVolumeMessages();
-        final List<Long> processedMessages = processVolumeMessages(volumeMessages);
+        LOGGER.info("Requesting message-consumption to GET all new messages since ID: " + LAST_PROCESSED_ID);
+        final List<VolumeMessageDto> volumeMessages = restClientService.getAllUnprocessedVolumeMessages(LAST_PROCESSED_ID);
 
-        // TODO: Save Stats
-        // TODO: Return response that they have been processed
-    }
+        if (volumeMessages.isEmpty()) {
+            LOGGER.info("No new messages to process");
+        } else {
+            final Long lastProcessedId = processVolumeMessages(volumeMessages);
 
-    private List<VolumeMessageDto> getLatestVolumeMessages() {
-        final ResponseEntity<List<VolumeMessageDto>> response = REST_TEMPLATE.exchange(
-                API_VOLUME_MESSAGES,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<VolumeMessageDto>>() {
-                });
-
-        return response.getBody();
+            if (lastProcessedId != null) {
+                LAST_PROCESSED_ID = lastProcessedId.toString();
+                LOGGER.info("Last processed message is with it: " + LAST_PROCESSED_ID);
+            }
+        }
     }
 
     private CurrencyPair processCurrencyPair(final String currencyFrom, final String currencyTo) {
@@ -105,14 +117,18 @@ public class ProcessorApplication {
     private void createNewHashMapInMapAndAdd(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
         CURRENCY_PAIR_MAP.put(currencyFrom, new HashMap<>());
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, currencyPair);
+
+        LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");
     }
 
     private void createNewEntryForMapAndAdd(final String currencyFrom, final String currencyTo, final CurrencyPair createdCurrencyPair) {
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, createdCurrencyPair);
+
+        LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");
     }
 
-    private List<Long> processVolumeMessages(final List<VolumeMessageDto> volumeMessages) {
-        final List<Long> processedMessages = new ArrayList<>();
+    private Long processVolumeMessages(final List<VolumeMessageDto> volumeMessages) {
+        Long lastProcessedId = null;
 
         for (final VolumeMessageDto message : volumeMessages) {
             // Transform the message's time to floored value which will be used as key
@@ -128,10 +144,10 @@ public class ProcessorApplication {
                 createNewDetail(detailIdentity);
             }
 
-            processedMessages.add(message.getId());
+            lastProcessedId = message.getId();
         }
 
-        return processedMessages;
+        return lastProcessedId;
     }
 
     private void createNewDetail(final CurrencyPairDetailIdentity detailIdentity) {

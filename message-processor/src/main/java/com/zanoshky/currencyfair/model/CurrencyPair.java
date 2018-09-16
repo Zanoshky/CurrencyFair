@@ -20,7 +20,7 @@ public class CurrencyPair {
     protected CurrencyPair() {
     }
 
-    public CurrencyPair(String currencyFrom, String currencyTo) {
+    public CurrencyPair(final String currencyFrom, final String currencyTo) {
         this.currencyFrom = currencyFrom;
         this.currencyTo = currencyTo;
     }

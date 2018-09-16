@@ -1,9 +1,8 @@
 package com.zanoshky.currencyfair.model;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -15,6 +14,14 @@ public class CurrencyPairDetail implements Serializable {
 
     @Column(name = "count")
     private Long count;
+
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "currency_from", referencedColumnName = "currency_from", insertable = false, updatable = false),
+            @JoinColumn(name = "currency_to", referencedColumnName = "currency_to", insertable = false, updatable = false),
+    })
+    @JsonIgnore
+    private CurrencyPair currencyPair;
 
     protected CurrencyPairDetail() {
     }
@@ -37,11 +44,16 @@ public class CurrencyPairDetail implements Serializable {
         return count;
     }
 
+    public CurrencyPair getCurrencyPair() {
+        return currencyPair;
+    }
+
     @Override
     public String toString() {
         return "CurrencyPairDetail{" +
                 "currencyPairDetailIdentity=" + currencyPairDetailIdentity +
                 ", count=" + count +
+                ", currencyPair=" + currencyPair +
                 '}';
     }
 }

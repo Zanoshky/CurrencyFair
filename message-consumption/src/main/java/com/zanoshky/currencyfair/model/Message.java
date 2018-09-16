@@ -1,7 +1,6 @@
 package com.zanoshky.currencyfair.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -43,10 +42,6 @@ public class Message implements Serializable {
     @Column(name = "originating_country")
     private String originatingCountry;
 
-    @JsonIgnore
-    @Column(name = "processed")
-    private boolean processed;
-
     protected Message() {
     }
 
@@ -62,7 +57,6 @@ public class Message implements Serializable {
         this.rate = rate;
         this.timePlaced = timePlaced;
         this.originatingCountry = originatingCountry;
-        this.processed = processed;
     }
 
     public Long getId() {
@@ -101,10 +95,6 @@ public class Message implements Serializable {
         return originatingCountry;
     }
 
-    public boolean isProcessed() {
-        return processed;
-    }
-
     @Override
     public String toString() {
         return "Message{" +
@@ -117,7 +107,6 @@ public class Message implements Serializable {
                 ", rate=" + rate +
                 ", timePlaced=" + timePlaced +
                 ", originatingCountry='" + originatingCountry + '\'' +
-                ", processed=" + processed +
                 '}';
     }
 }

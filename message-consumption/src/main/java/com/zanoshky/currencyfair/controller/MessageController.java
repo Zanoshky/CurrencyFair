@@ -21,19 +21,14 @@ public class MessageController {
         return messageRepository.findAll();
     }
 
-    @GetMapping("/volume-messages")
-    public List<VolumeMessage> getVolumeTrades() {
-        return messageRepository.findAllOnlyVolumeInfo();
+    @GetMapping("/volume-messages/{lastProcessedId}")
+    public List<VolumeMessage> getVolumeTrades(@PathVariable("lastProcessedId") final long lastProcessedId) {
+        return messageRepository.findAllOnlyVolumeInfo(lastProcessedId);
     }
 
     @PostMapping("/message")
     public Message createTrade(@Valid @RequestBody final Message message) {
         return messageRepository.save(message);
-    }
-
-    @PostMapping("/processed-messages")
-    public boolean markProcessedMessages(@Valid @RequestBody final List<Long> processedMessagesIdList) {
-        return true;
     }
 
 }

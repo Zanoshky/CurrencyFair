@@ -37,10 +37,9 @@ CurrencyFair was decomposed into three core microservices. All of them are indep
 #### Message Consumption Service API's
 Method	| Path	| Description	| User authenticated
 ------- | ----- | ------------- |:----------------:|
-GET	    | /api/messages	            | Returns all information about all messages                                        | ×
-GET	    | /api/volume-messages      | Returns filtered information about messages (id, currencies, timestamp)           | ×
-POST    | /api/message	            | Saves a trade message to the Market Trade Processor                               | ×
-POST    | /api/processed-messages   | Marks messages that have been processed by Market Trade Processor to true in DB   | ×
+GET	    | /api/messages	                         | Returns all information about all messages                                                               | ×
+GET	    | /api/volume-messages/{lastProcessedId} | Returns filtered information about messages (id, currencies, timestamp) greater then last processed ID   | ×
+POST    | /api/message	                         | Saves a trade message to the Market Trade Processor                                                      | ×
 
 Approach taken:
 - [x] Easy : Consumed messages are written to disk for rendering in the frontend. 
@@ -80,4 +79,12 @@ Approach taken:
 - Service communicates with **Message-Processor** to get statistical information about messages from its database.
 
 Approach taken:
-- [x] Average : Render a graph of processed data from the messages consumed. 
+- [x] Average : Render a graph of processed data from the messages consumed.
+
+----
+**TODO:**
+- **MTP-1**: Call a API processed-messages with JSON Payload of processed messages to message-consumption service
+- **MTP-2**: Process API call -> **MTP-1** -> by marking messages processed = 1 (true) in internal DB for every ID in JSON Payload.
+- **MTP-3**: Create API in message-processor to return all statistical data
+- **MTP-4**: Frontend work to consume statistical data API from message-processor -> **MTP-3**
+ 
