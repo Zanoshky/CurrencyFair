@@ -5,6 +5,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
 public class CurrencyPairDetail implements Serializable {
 
     @EmbeddedId
+    @OrderBy("time_id DESC")
     private CurrencyPairDetailIdentity currencyPairDetailIdentity;
 
     @Column(name = "count")

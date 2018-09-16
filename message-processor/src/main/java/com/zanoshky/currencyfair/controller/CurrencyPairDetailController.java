@@ -1,7 +1,9 @@
 package com.zanoshky.currencyfair.controller;
 
 
-import com.zanoshky.currencyfair.common.dto.CurrencyPairDetailDto;
+import com.zanoshky.currencyfair.common.model.ChartResponse;
+import com.zanoshky.currencyfair.common.model.Dataset;
+import com.zanoshky.currencyfair.model.CurrencyPair;
 import com.zanoshky.currencyfair.model.CurrencyPairDetail;
 import com.zanoshky.currencyfair.repository.CurrencyPairDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +22,42 @@ public class CurrencyPairDetailController {
     CurrencyPairDetailRepository currencyPairDetailRepository;
 
     @GetMapping("/currency-pair-details")
-    public List<CurrencyPairDetailDto> getAllTrades() {
-        final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAll();
-        final List<CurrencyPairDetailDto> dtoList = new ArrayList<>();
+    public List<ChartResponse> getAllCurrencyPairDetails() {
+        final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSort();
+        final List<ChartResponse> dtoList = new ArrayList<>();
+
+        CurrencyPair currentPair = null;
+        Dataset dataset = null;
+        ChartResponse currentChart = null;
 
         for (final CurrencyPairDetail detail : detailList) {
-            dtoList.add(new CurrencyPairDetailDto(detail.getCurrencyPairDetailIdentity().getTimeId(), detail.getCurrencyPair().getCurrencyFrom(), detail.getCurrencyPair().getCurrencyTo(), detail.getCount()));
+            if (currentPair != null && detail.getCurrencyPairDetailIdentity().getCurrencyPair().equals(currentPair.getId())) {
+                currentChart.getLabels().add(detail.getCurrencyPairDetailIdentity().getTimeId().toString());
+                dataset.getValue().add(detail.getCount());
+            } else {
+                if (currentPair == null) {
+                    currentPair = detail.getCurrencyPair();
+                    continue;
+                }
+
+                if (currentChart != null) {
+                    // Add current chart to the response list
+                    dtoList.add(currentChart);
+                }
+
+                currentPair = detail.getCurrencyPair();
+
+                // Create new object empty chart response and set name
+                currentChart = new ChartResponse(detail.getCurrencyPair().getCurrencyFrom() + " -> " + detail.getCurrencyPair().getCurrencyTo());
+                currentChart.getLabels().add(detail.getCurrencyPairDetailIdentity().getTimeId().toString());
+                dataset = new Dataset("First");
+                dataset.getValue().add(detail.getCount());
+                currentChart.getDatasets().add(dataset);
+            }
         }
 
+        // Add current chart to the response list
+        dtoList.add(currentChart);
         return dtoList;
     }
 

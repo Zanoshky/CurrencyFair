@@ -1,12 +1,22 @@
-package com.zanoshky.currencyfair.model;
+package com.zanoshky.currencyfair.common.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ChartsResponse {
+public class ChartResponse {
 
     private String chartName;
     private List<String> labels;
     private List<Dataset> datasets;
+
+    protected ChartResponse() {
+    }
+
+    public ChartResponse(final String chartName) {
+        this.chartName = chartName;
+        labels = new ArrayList<>();
+        datasets = new ArrayList<>();
+    }
 
     public String getChartName() {
         return chartName;

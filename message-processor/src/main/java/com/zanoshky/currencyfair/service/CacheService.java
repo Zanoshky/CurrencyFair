@@ -42,12 +42,12 @@ public class CacheService {
             final Map<String, CurrencyPair> existingMap = CURRENCY_PAIR_MAP.get(pair.getCurrencyFrom());
 
             if (existingMap == null) {
-                createNewHashMapInMapAndAdd(pair.getCurrencyFrom(), pair.getCurrencyTo(), pair);
+                createNewConcurrentMapInCacheAndAddPair(pair.getCurrencyFrom(), pair.getCurrencyTo(), pair);
             } else {
                 final CurrencyPair existingPair = CURRENCY_PAIR_MAP.get(pair.getCurrencyFrom()).get(pair.getCurrencyTo());
 
                 if (existingPair == null) {
-                    createNewEntryForMapAndAdd(pair.getCurrencyFrom(), pair.getCurrencyTo(), pair);
+                    createNewEntryForCacheAndAddPair(pair.getCurrencyFrom(), pair.getCurrencyTo(), pair);
                 }
             }
         }
@@ -79,27 +79,27 @@ public class CacheService {
 
         if (fromMap == null) {
             final CurrencyPair currencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
-            createNewHashMapInMapAndAdd(currencyFrom, currencyTo, currencyPair);
+            createNewConcurrentMapInCacheAndAddPair(currencyFrom, currencyTo, currencyPair);
         } else {
             final CurrencyPair currencyPair = CURRENCY_PAIR_MAP.get(currencyFrom).get(currencyTo);
 
             if (currencyPair == null) {
                 final CurrencyPair createdCurrencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
-                createNewEntryForMapAndAdd(currencyFrom, currencyTo, createdCurrencyPair);
+                createNewEntryForCacheAndAddPair(currencyFrom, currencyTo, createdCurrencyPair);
             }
         }
 
         return CURRENCY_PAIR_MAP.get(currencyFrom).get(currencyTo);
     }
 
-    private void createNewHashMapInMapAndAdd(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
+    private void createNewConcurrentMapInCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
         CURRENCY_PAIR_MAP.put(currencyFrom, new ConcurrentHashMap<>());
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, currencyPair);
 
         LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");
     }
 
-    private void createNewEntryForMapAndAdd(final String currencyFrom, final String currencyTo, final CurrencyPair createdCurrencyPair) {
+    private void createNewEntryForCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair createdCurrencyPair) {
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, createdCurrencyPair);
 
         LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");

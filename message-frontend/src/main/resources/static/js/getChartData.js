@@ -16,9 +16,9 @@ var userScript = (function () {
             labels: chartdata.labels,
             datasets: [{
                 label: chartdata.datasets[0].name,
-                fillColor: "rgba(209,17,65,0.1)",
-                strokeColor: "rgba(209,17,65,1)",
-                pointColor: "rgba(209,17,65,1)",
+                fillColor: "rgba(0,40,100,0.1)",
+                strokeColor: "rgba(0,40,100,1)",
+                pointColor: "rgba(0,40,100,1)",
                 pointStrokeColor: "#fff",
                 pointHighlightFill: "#fff",
                 pointHighlightStroke: "rgba(220,220,220,1)",
@@ -60,7 +60,7 @@ var userScript = (function () {
     };
 
     var getChartData = function () {
-        var endpoint = "/view-charts/";
+        var endpoint = "/view-charts";
         $.getJSON(endpoint)
             .done(function (data) {
                 var parentDiv = $("#parentDiv");

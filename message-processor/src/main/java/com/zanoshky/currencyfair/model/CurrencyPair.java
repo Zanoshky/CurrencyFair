@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "currency_pair")
@@ -41,6 +42,25 @@ public class CurrencyPair {
 
     public String getCurrencyTo() {
         return currencyTo;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CurrencyPair that = (CurrencyPair) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(currencyFrom, that.currencyFrom) &&
+                Objects.equals(currencyTo, that.currencyTo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, currencyFrom, currencyTo);
     }
 
     @Override

@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Embeddable
 public class CurrencyPairDetailIdentity implements Serializable {
@@ -28,6 +29,24 @@ public class CurrencyPairDetailIdentity implements Serializable {
 
     public Long getCurrencyPair() {
         return currencyPairId;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CurrencyPairDetailIdentity that = (CurrencyPairDetailIdentity) o;
+        return Objects.equals(timeId, that.timeId) &&
+                Objects.equals(currencyPairId, that.currencyPairId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(timeId, currencyPairId);
     }
 
     @Override

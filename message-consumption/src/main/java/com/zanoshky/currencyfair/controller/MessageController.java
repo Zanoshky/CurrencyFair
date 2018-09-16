@@ -22,17 +22,17 @@ public class MessageController {
     MessageRepository messageRepository;
 
     @GetMapping("/messages")
-    public List<Message> getAllTrades() {
+    public List<Message> getAllMessages() {
         return messageRepository.findAll();
     }
 
     @GetMapping("/volume-messages/{lastProcessedId:[\\d]+}")
-    public List<VolumeMessage> getVolumeTrades(@PathVariable("lastProcessedId") final long lastProcessedId) {
+    public List<VolumeMessage> getVolumeMessagesSinceLastProcessedId(@PathVariable("lastProcessedId") final long lastProcessedId) {
         return messageRepository.findAllOnlyVolumeInfo(lastProcessedId);
     }
 
     @PostMapping("/message")
-    public Message createTrade(@Valid @RequestBody final Message message) {
+    public Message createMessage(@Valid @RequestBody final Message message) {
         return messageRepository.save(message);
     }
 
