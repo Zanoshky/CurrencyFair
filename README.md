@@ -67,7 +67,7 @@ Approach taken:
 #### Message Processor Service API's
 Method	| Path	| Description	| User authenticated
 ------- | ----- | ------------- |:----------------:|
-GET     | /api/currency-pair-details    | Returns all statistical information about currency pairs  | ×
+GET     | /api/currency-pair-charts    | Returns all statistical information about currency pairs  | ×
 
 Approach taken:
 - [x] Average : Analyse incoming messages for trends, and transform data to prepare for a more visual frontend rendering, e.g. graphing currency volume of messages from one particular currency pair market (EUR/GBP).

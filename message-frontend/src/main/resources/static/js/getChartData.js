@@ -16,9 +16,9 @@ var userScript = (function () {
             labels: chartdata.labels,
             datasets: [{
                 label: chartdata.datasets[0].name,
-                fillColor: "rgba(0,40,100,0.1)",
-                strokeColor: "rgba(0,40,100,1)",
-                pointColor: "rgba(0,40,100,1)",
+                fillColor: "rgba(0,100,255,0.1)",
+                strokeColor: "rgba(0,100,255,1)",
+                pointColor: "rgba(0,100,255,1)",
                 pointStrokeColor: "#fff",
                 pointHighlightFill: "#fff",
                 pointHighlightStroke: "rgba(220,220,220,1)",
@@ -34,14 +34,14 @@ var userScript = (function () {
 
     var createCanvasNode = function () {
         var $div = $("<div>", {
-            class: "col-8"
+            class: "col-xs-12 col-md-6"
         });
 
-        var $span = $("<span>", {
-            class: "chartName"
+        var paragraph = $("<p>", {
+            class: "font-weight-bold text-center text-primary"
         });
 
-        $($div).append($span);
+        $($div).append(paragraph);
         var $canvas = $("<canvas>", {
             class: "chartClass"
         });
@@ -69,24 +69,13 @@ var userScript = (function () {
                 chartData = [];
                 charts = [];
 
-                var containerNode;
                 var canvasNode;
 
                 for (var i = 0; i < data.length; i++) {
-                    if (i % 3 == 0) {
-                        containerNode = createContainerNode();
-                        canvasNode = createCanvasNode();
-                        chartData[i] = prepareChartContext(canvasNode.canvasHandler, data[i]);
-                        $($(canvasNode.canvasNodeHandler).find('span')).append(document.createTextNode(data[i].chartName));
-                        $(containerNode).append(canvasNode.canvasNodeHandler);
-                        $(parentDiv).append(containerNode);
-                    } else {
-                        canvasNode = createCanvasNode();
-                        chartData[i] = prepareChartContext(canvasNode.canvasHandler, data[i]);
-                        $($(canvasNode.canvasNodeHandler).find('span')).append(document.createTextNode(data[i].chartName));
-                        $(containerNode).append(canvasNode.canvasNodeHandler);
-                    }
-                    ;
+                    canvasNode = createCanvasNode();
+                    chartData[i] = prepareChartContext(canvasNode.canvasHandler, data[i]);
+                    $($(canvasNode.canvasNodeHandler).find('p')).append(document.createTextNode(data[i].chartName));
+                    $(parentDiv).append(canvasNode.canvasNodeHandler);
                 }
 
                 $.each(chartData, function (index, value) {

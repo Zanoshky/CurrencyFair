@@ -1,12 +1,13 @@
 package com.zanoshky.currencyfair.controller;
 
-import com.zanoshky.currencyfair.common.model.ChartResponse;
-import com.zanoshky.currencyfair.service.RestClientService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.zanoshky.currencyfair.common.model.ChartResponse;
+import com.zanoshky.currencyfair.service.RestClientService;
 
 @RestController
 public class DemoController {
@@ -15,8 +16,7 @@ public class DemoController {
     RestClientService restClientService;
 
     @RequestMapping("/view-charts")
-    public List<ChartResponse> getAllCurrecnyPairsDetails() {
-        final List<ChartResponse> chartsResponse = restClientService.getAllCurrencyPairDetails();
-        return chartsResponse;
+    public List<ChartResponse> getAllCurrencyPairsDetails() {
+        return restClientService.getAllCurrencyPairDetails();
     }
 }
