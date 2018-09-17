@@ -1,6 +1,6 @@
 package com.zanoshky.currencyfair.service;
 
-import com.zanoshky.currencyfair.common.model.VolumeMessage;
+import com.zanoshky.currencyfair.common.dto.VolumeMessage;
 import com.zanoshky.currencyfair.dto.VolumeMessageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

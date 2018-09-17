@@ -1,5 +1,6 @@
 package com.zanoshky.currencyfair.model;
 
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,7 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "currency_pair")
@@ -18,9 +21,13 @@ public class CurrencyPair {
     @Column(name = "id")
     private Long id;
 
+    @NotNull
+    @Length(min = 3, max = 3)
     @Column(name = "currency_from")
     private String currencyFrom;
 
+    @NotNull
+    @Length(min = 3, max = 3)
     @Column(name = "currency_to")
     private String currencyTo;
 

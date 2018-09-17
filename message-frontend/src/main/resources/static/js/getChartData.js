@@ -60,7 +60,7 @@ var userScript = (function () {
     };
 
     var getChartData = function () {
-        var endpoint = "/view-charts";
+        var endpoint = "/view-all-currency-stat-charts";
         $.getJSON(endpoint)
             .done(function (data) {
                 var parentDiv = $("#parentDiv");

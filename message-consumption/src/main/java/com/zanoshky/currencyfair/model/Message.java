@@ -1,7 +1,7 @@
 package com.zanoshky.currencyfair.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.hibernate.validator.constraints.Length;
+import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,9 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Date;
+
+import org.hibernate.validator.constraints.Length;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "message")
@@ -26,27 +29,38 @@ public class Message implements Serializable {
     @Column(name = "user_id")
     private String userId;
 
+    @NotNull
     @Length(min = 3, max = 3)
     @Column(name = "currency_from")
     private String currencyFrom;
 
+    @NotNull
     @Length(min = 3, max = 3)
     @Column(name = "currency_to")
     private String currencyTo;
 
+    @NotNull
+    @DecimalMin("0.0")
     @Column(name = "amount_sell")
     private Double amountSell;
 
+    @NotNull
+    @DecimalMin("0.0")
     @Column(name = "amount_buy")
     private Double amountBuy;
 
+    @NotNull
+    @DecimalMin("0.0")
     @Column(name = "rate")
     private Double rate;
 
+    @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MMM-YY HH:mm:ss")
     @Column(name = "time_placed")
     private Date timePlaced;
 
+    @NotNull
+    @Length(min = 2, max = 2)
     @Column(name = "originating_country")
     private String originatingCountry;
 

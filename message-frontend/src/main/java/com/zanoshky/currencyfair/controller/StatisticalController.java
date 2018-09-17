@@ -6,17 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zanoshky.currencyfair.common.model.ChartResponse;
+import com.zanoshky.currencyfair.common.dto.ChartResponse;
 import com.zanoshky.currencyfair.service.RestClientService;
 
 @RestController
-public class DemoController {
+public class StatisticalController {
 
     @Autowired
     RestClientService restClientService;
 
-    @RequestMapping("/view-charts")
-    public List<ChartResponse> getAllCurrencyPairsDetails() {
-        return restClientService.getAllCurrencyPairDetails();
+    @RequestMapping("/view-all-currency-stat-charts")
+    public List<ChartResponse> getAllCurrencyStatCharts() {
+        return restClientService.getAllCurrencyStatCharts();
     }
 }

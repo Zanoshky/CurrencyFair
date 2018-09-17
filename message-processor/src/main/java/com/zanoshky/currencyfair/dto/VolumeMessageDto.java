@@ -1,8 +1,8 @@
 package com.zanoshky.currencyfair.dto;
 
-import com.zanoshky.currencyfair.common.model.VolumeMessage;
-
 import java.time.LocalDateTime;
+
+import com.zanoshky.currencyfair.common.dto.VolumeMessage;
 
 public class VolumeMessageDto implements VolumeMessage {
 

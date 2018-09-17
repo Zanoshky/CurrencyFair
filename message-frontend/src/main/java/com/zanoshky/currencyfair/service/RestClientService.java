@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.zanoshky.currencyfair.common.model.ChartResponse;
+import com.zanoshky.currencyfair.common.dto.ChartResponse;
 
 @Service
 public class RestClientService {
@@ -26,7 +26,7 @@ public class RestClientService {
      *
      * @return {@link List} of {@link ChartResponse} which are ready for presenting to the Frontend
      */
-    public List<ChartResponse> getAllCurrencyPairDetails() {
+    public List<ChartResponse> getAllCurrencyStatCharts() {
         return Arrays.stream(restTemplate.getForObject(GET_ALL_URL, ChartResponse[].class)).collect(Collectors.toList());
     }
 }

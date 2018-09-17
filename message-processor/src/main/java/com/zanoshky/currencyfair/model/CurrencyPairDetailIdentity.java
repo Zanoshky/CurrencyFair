@@ -1,10 +1,11 @@
 package com.zanoshky.currencyfair.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 @Embeddable
 public class CurrencyPairDetailIdentity implements Serializable {
