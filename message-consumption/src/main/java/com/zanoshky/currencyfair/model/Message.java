@@ -54,8 +54,7 @@ public class Message implements Serializable {
     @Column(name = "rate")
     private Double rate;
 
-    @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MMM-YY HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MMM-yy HH:mm:ss")
     @Column(name = "time_placed")
     private Date timePlaced;
 
