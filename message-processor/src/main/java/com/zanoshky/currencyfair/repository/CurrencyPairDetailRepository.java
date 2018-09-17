@@ -19,4 +19,7 @@ public interface CurrencyPairDetailRepository extends JpaRepository<CurrencyPair
     @Query(nativeQuery = true, value = "SELECT * FROM currency_pair_detail AS cpd ORDER BY cpd.time_id ASC, cpd.currency_pair_id ASC")
     List<CurrencyPairDetail> findAllAndSort();
 
+    @Query(nativeQuery = true, value = "SELECT * FROM currency_pair_detail AS cpd WHERE time_id > NOW() - INTERVAL 15 MINUTE ORDER BY cpd.time_id ASC, cpd.currency_pair_id ASC")
+    List<CurrencyPairDetail> findAllAndSortForLastXMinutes();
+
 }

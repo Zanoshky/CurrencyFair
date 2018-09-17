@@ -1,5 +1,7 @@
 package com.zanoshky.currencyfair.controller;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +15,14 @@ import com.zanoshky.currencyfair.common.dto.Dataset;
 import com.zanoshky.currencyfair.model.CurrencyPair;
 import com.zanoshky.currencyfair.model.CurrencyPairDetail;
 import com.zanoshky.currencyfair.repository.CurrencyPairDetailRepository;
+import com.zanoshky.currencyfair.service.CacheService;
 
 @RestController
 @RequestMapping("/api")
 public class CurrencyPairDetailController {
+
+    @Autowired
+    CacheService cacheService;
 
     @Autowired
     CurrencyPairDetailRepository currencyPairDetailRepository;
@@ -64,36 +70,9 @@ public class CurrencyPairDetailController {
 
     @GetMapping("/currency-pair-charts-last-15-minutes")
     public List<ChartResponse> getAllCurrencyStatChartsLast15Minutes() {
-        final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSort();
+        final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSortForLastXMinutes();
         final List<ChartResponse> dtoList = new ArrayList<>();
-
-        Dataset dataset = null;
-        CurrencyPair currentPair = null;
-        ChartResponse currentChart = null;
-
-        for (final CurrencyPairDetail detail : detailList) {
-            if (currentPair != null && detail.getCurrencyPairDetailIdentity().getCurrencyPair().equals(currentPair.getId())) {
-                currentChart.getLabels().add(detail.getCurrencyPairDetailIdentity().getTimeId().toString());
-                dataset.getValue().add(detail.getCount());
-            } else {
-                if (currentChart != null) {
-                    // Add current chart to the response list before overwriting with new chart value
-                    dtoList.add(currentChart);
-                }
-
-                currentPair = detail.getCurrencyPair();
-
-                // Create new object empty chart response and set name
-                currentChart = new ChartResponse(formChartName(detail));
-                currentChart.getLabels().add(detail.getCurrencyPairDetailIdentity().getTimeId().toString());
-                dataset = new Dataset("First");
-                dataset.getValue().add(detail.getCount());
-                currentChart.getDatasets().add(dataset);
-            }
-        }
-
-        // Add current chart to the response list
-        dtoList.add(currentChart);
+        final List<String> list = generateLastXWhereTimeIds(15L);
         return dtoList;
     }
 
@@ -102,4 +81,14 @@ public class CurrencyPairDetailController {
                 + detail.getCurrencyPair().getCurrencyTo();
     }
 
+    private List<String> generateLastXWhereTimeIds(final long fromMinutes) {
+        final LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(fromMinutes);
+        final List<String> minutesInBetween = new ArrayList<>();
+
+        for (long i = 0; i < fromMinutes; i++) {
+            minutesInBetween.add("'" + startTime.plusMinutes(i).toString().replace('T', ' ') + "'");
+        }
+
+        return minutesInBetween;
+    }
 }
