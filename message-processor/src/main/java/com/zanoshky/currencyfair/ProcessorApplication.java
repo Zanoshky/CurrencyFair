@@ -31,7 +31,7 @@ public class ProcessorApplication {
         cacheService.loadCurrencyPairsFromDbIntoMap();
     }
 
-    @Scheduled(fixedRate = 60000, initialDelay = 10000)
+    @Scheduled(fixedRate = 10000, initialDelay = 10000)
     private void downloadLatestVolumeMessages() {
         cacheService.triggerStatisticalSync();
     }

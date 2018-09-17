@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,9 +20,9 @@ import java.util.concurrent.ConcurrentMap;
 
 @Service
 public class CacheService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CacheService.class);
-    private static final ConcurrentMap<String, ConcurrentMap<String, CurrencyPair>> CURRENCY_PAIR_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentMap<String, ConcurrentMap<String, CurrencyPair>> CURRENCY_PAIR_MAP = new ConcurrentHashMap<>();
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CacheService.class);
     private static String lastProcessedId = "0";
 
     @Autowired
@@ -137,4 +138,18 @@ public class CacheService {
         detail.incrementCount();
         currencyService.updateCurrencyPairDetail(detail);
     }
+
+    public List<CurrencyPair> listOfAllCurrencyPairs() {
+        final List<CurrencyPair> list = new ArrayList<>();
+
+        for (final String from : CURRENCY_PAIR_MAP.keySet()) {
+            for (final String to : CURRENCY_PAIR_MAP.get(from).keySet()) {
+                list.add(CURRENCY_PAIR_MAP.get(from).get(to));
+            }
+        }
+
+        return list;
+    }
+
+
 }

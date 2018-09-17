@@ -1,25 +1,27 @@
 package com.zanoshky.currencyfair.controller;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.zanoshky.currencyfair.common.dto.ChartResponse;
 import com.zanoshky.currencyfair.common.dto.Dataset;
 import com.zanoshky.currencyfair.model.CurrencyPair;
 import com.zanoshky.currencyfair.model.CurrencyPairDetail;
 import com.zanoshky.currencyfair.repository.CurrencyPairDetailRepository;
 import com.zanoshky.currencyfair.service.CacheService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class CurrencyPairDetailController {
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     CacheService cacheService;
@@ -30,7 +32,7 @@ public class CurrencyPairDetailController {
     /**
      * Method which returns processed {@link CurrencyPairDetail} into statistical information about volume of transactions per
      * {@link java.time.LocalDateTime}.
-     * 
+     *
      * @return {@link List} of {@link ChartResponse} which statisticaly information about {@link CurrencyPairDetail}.
      */
     @GetMapping("/currency-pair-charts")
@@ -70,9 +72,20 @@ public class CurrencyPairDetailController {
 
     @GetMapping("/currency-pair-charts-last-15-minutes")
     public List<ChartResponse> getAllCurrencyStatChartsLast15Minutes() {
-        final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSortForLastXMinutes();
+        final List<String> timeIds = generateLastXWhereTimeIds(15L);
+
+        final LocalDateTime from = parseDate(timeIds.get(0));
+        final LocalDateTime to = parseDate(timeIds.get(timeIds.size() - 1));
+
+        final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSortForLastXMinutes(from, to);
         final List<ChartResponse> dtoList = new ArrayList<>();
-        final List<String> list = generateLastXWhereTimeIds(15L);
+
+        for (final CurrencyPair pair : cacheService.listOfAllCurrencyPairs()) {
+            for (final CurrencyPairDetail detail : detailList) {
+
+            }
+        }
+
         return dtoList;
     }
 
@@ -86,9 +99,13 @@ public class CurrencyPairDetailController {
         final List<String> minutesInBetween = new ArrayList<>();
 
         for (long i = 0; i < fromMinutes; i++) {
-            minutesInBetween.add("'" + startTime.plusMinutes(i).toString().replace('T', ' ') + "'");
+            minutesInBetween.add(startTime.plusMinutes(i).toString().replace('T', ' ') + ":00");
         }
 
         return minutesInBetween;
+    }
+
+    private LocalDateTime parseDate(final String date) {
+        return LocalDateTime.parse(date, formatter);
     }
 }
