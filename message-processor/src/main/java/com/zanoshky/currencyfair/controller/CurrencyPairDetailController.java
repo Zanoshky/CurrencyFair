@@ -1,22 +1,21 @@
 package com.zanoshky.currencyfair.controller;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.zanoshky.currencyfair.common.dto.ChartResponse;
 import com.zanoshky.currencyfair.common.dto.Dataset;
 import com.zanoshky.currencyfair.model.CurrencyPair;
 import com.zanoshky.currencyfair.model.CurrencyPairDetail;
 import com.zanoshky.currencyfair.repository.CurrencyPairDetailRepository;
 import com.zanoshky.currencyfair.service.CacheService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -31,10 +30,9 @@ public class CurrencyPairDetailController {
     CurrencyPairDetailRepository currencyPairDetailRepository;
 
     /**
-     * Method which returns processed {@link CurrencyPairDetail} into statistical information about volume of transactions per
-     * {@link java.time.LocalDateTime}.
+     * Method processes values of {@link CurrencyPairDetail} into statistical information about transactions volume per minute.
      *
-     * @return {@link List} of {@link ChartResponse} which statisticaly information about {@link CurrencyPairDetail}.
+     * @return {@link List} of {@link ChartResponse} which presents statistical information about transactions volume per minute for specific {@link CurrencyPair}.
      */
     @GetMapping("/currency-pair-charts-last-15-minutes")
     public List<ChartResponse> getAllCurrencyStatChartsLast15Minutes() {
@@ -48,24 +46,14 @@ public class CurrencyPairDetailController {
         final List<String> timeIdLabels = generateTimeIdLabels(timeIds);
 
         final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSortForLastXMinutes(startTime, endTime);
-
         final List<ChartResponse> dtoResponse = new ArrayList<>();
 
         for (final CurrencyPair pair : cacheService.listOfAllCurrencyPairs()) {
-            final ChartResponse currentChart = new ChartResponse(formChartName(pair));
-            currentChart.setLabels(timeIdLabels);
-            final Dataset dataset = new Dataset("First");
+            final ChartResponse currentChart = new ChartResponse(formChartName(pair), timeIdLabels);
+            final Dataset dataset = new Dataset("Dataset");
 
             for (final LocalDateTime time : timeIds) {
-                long count = 0;
-
-                for (final CurrencyPairDetail detail : detailList) {
-                    if (detail.getCurrencyPair().equals(pair) && detail.getCurrencyPairDetailIdentity().getTimeId().equals(time)) {
-                        count = detail.getCount();
-                        break;
-                    }
-                }
-
+                final long count = getCountFromTimeAndCurrencyPair(detailList, pair, time);
                 dataset.getValue().add(count);
             }
 
@@ -74,6 +62,16 @@ public class CurrencyPairDetailController {
         }
 
         return dtoResponse;
+    }
+
+    private long getCountFromTimeAndCurrencyPair(final List<CurrencyPairDetail> detailList, final CurrencyPair pair, final LocalDateTime time) {
+        for (final CurrencyPairDetail detail : detailList) {
+            if (detail.getCurrencyPair().equals(pair) && detail.getCurrencyPairDetailIdentity().getTimeId().equals(time)) {
+                return detail.getCount();
+            }
+        }
+
+        return 0;
     }
 
     private String formChartName(final CurrencyPair pair) {

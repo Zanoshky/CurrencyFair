@@ -1,14 +1,13 @@
 package com.zanoshky.currencyfair.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.zanoshky.currencyfair.common.dto.ChartResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.zanoshky.currencyfair.common.dto.ChartResponse;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RestClientService {
@@ -22,7 +21,7 @@ public class RestClientService {
     }
 
     /**
-     * Contacts API from message-processor service to GET all {@link ChartResponse} which has been processed.
+     * Contacts message-processor service API to GET all {@link ChartResponse} which has been processed to visual represents transaction volume of each currency pair.
      *
      * @return {@link List} of {@link ChartResponse} which are ready for presenting to the Frontend
      */

@@ -1,5 +1,15 @@
 package com.zanoshky.currencyfair.service;
 
+import com.zanoshky.currencyfair.dto.VolumeMessageDto;
+import com.zanoshky.currencyfair.model.CurrencyPair;
+import com.zanoshky.currencyfair.model.CurrencyPairDetail;
+import com.zanoshky.currencyfair.model.CurrencyPairDetailIdentity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -8,16 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.zanoshky.currencyfair.dto.VolumeMessageDto;
-import com.zanoshky.currencyfair.model.CurrencyPair;
-import com.zanoshky.currencyfair.model.CurrencyPairDetail;
-import com.zanoshky.currencyfair.model.CurrencyPairDetailIdentity;
 
 @Service
 public class CacheService {
@@ -33,12 +33,11 @@ public class CacheService {
     private RestClientService restClientService;
 
     /**
-     * Method to connect to internal database and get all existing values of {@link CurrencyPair}. Retrieved values are loaded into Cache memory in
+     * Method to connect to internal database and get all existing values of {@link CurrencyPair}. Retrieved values are loaded into {@link CacheService} which represents cache memory in
      * form of {@link ConcurrentMap}.
      */
     public void loadCurrencyPairsFromDbIntoMap() {
         LOGGER.info("Loading existing CurrencyPairs into cache");
-
         final List<CurrencyPair> currencyPairs = currencyService.findAllExistingCurrencyPairs();
 
         for (final CurrencyPair pair : currencyPairs) {
@@ -62,7 +61,7 @@ public class CacheService {
      * Method to trigger API call towards message-consumption service to gather all new {@link VolumeMessageDto} since last processed message.
      */
     public void triggerStatisticalSync() {
-        LOGGER.info("Requesting message-consumption to GET all new messages since ID: " + lastProcessedId);
+        LOGGER.info(MessageFormat.format("Requesting message-consumption to GET all new messages since ID: {0}", lastProcessedId));
         final List<VolumeMessageDto> volumeMessages = restClientService.getAllUnprocessedVolumeMessages(lastProcessedId);
 
         if (volumeMessages.isEmpty()) {
@@ -72,40 +71,26 @@ public class CacheService {
 
             if (newLastId != null) {
                 lastProcessedId = newLastId.toString();
-                LOGGER.info("Last processed message is with ID: " + lastProcessedId);
+                LOGGER.info(MessageFormat.format("Last processed message is with ID: {0}", lastProcessedId));
             }
         }
     }
 
-    private CurrencyPair processCurrencyPair(final String currencyFrom, final String currencyTo) {
-        final Map<String, CurrencyPair> fromMap = CURRENCY_PAIR_MAP.get(currencyFrom);
+    /**
+     * Method goes trues {@link ConcurrentMap} in-memory cache and gets each instance of {@link CurrencyPair}.
+     *
+     * @return {@link List} interface of {@link ArrayList} containts each value of {@link CurrencyPair} loaded in-memory cache.
+     */
+    public List<CurrencyPair> listOfAllCurrencyPairs() {
+        final List<CurrencyPair> list = new ArrayList<>();
 
-        if (fromMap == null) {
-            final CurrencyPair currencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
-            createNewConcurrentMapInCacheAndAddPair(currencyFrom, currencyTo, currencyPair);
-        } else {
-            final CurrencyPair currencyPair = CURRENCY_PAIR_MAP.get(currencyFrom).get(currencyTo);
-
-            if (currencyPair == null) {
-                final CurrencyPair createdCurrencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
-                createNewEntryForCacheAndAddPair(currencyFrom, currencyTo, createdCurrencyPair);
+        for (final String from : CURRENCY_PAIR_MAP.keySet()) {
+            for (final String to : CURRENCY_PAIR_MAP.get(from).keySet()) {
+                list.add(CURRENCY_PAIR_MAP.get(from).get(to));
             }
         }
 
-        return CURRENCY_PAIR_MAP.get(currencyFrom).get(currencyTo);
-    }
-
-    private void createNewConcurrentMapInCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
-        CURRENCY_PAIR_MAP.put(currencyFrom, new ConcurrentHashMap<>());
-        CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, currencyPair);
-
-        LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");
-    }
-
-    private void createNewEntryForCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair createdCurrencyPair) {
-        CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, createdCurrencyPair);
-
-        LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");
+        return list;
     }
 
     private Long processVolumeMessages(final List<VolumeMessageDto> volumeMessages) {
@@ -131,6 +116,35 @@ public class CacheService {
         return lastProcessedId;
     }
 
+    private CurrencyPair processCurrencyPair(final String currencyFrom, final String currencyTo) {
+        final Map<String, CurrencyPair> fromMap = CURRENCY_PAIR_MAP.get(currencyFrom);
+
+        if (fromMap == null) {
+            final CurrencyPair currencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
+            createNewConcurrentMapInCacheAndAddPair(currencyFrom, currencyTo, currencyPair);
+        } else {
+            final CurrencyPair currencyPair = CURRENCY_PAIR_MAP.get(currencyFrom).get(currencyTo);
+
+            if (currencyPair == null) {
+                final CurrencyPair createdCurrencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
+                createNewEntryForCacheAndAddPair(currencyFrom, currencyTo, createdCurrencyPair);
+            }
+        }
+
+        return CURRENCY_PAIR_MAP.get(currencyFrom).get(currencyTo);
+    }
+
+    private void createNewConcurrentMapInCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
+        CURRENCY_PAIR_MAP.put(currencyFrom, new ConcurrentHashMap<>());
+        CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, currencyPair);
+        LOGGER.info(MessageFormat.format("Added {0} - {1} into cache", currencyFrom, currencyTo));
+    }
+
+    private void createNewEntryForCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair createdCurrencyPair) {
+        CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, createdCurrencyPair);
+        LOGGER.info(MessageFormat.format("Added {0} - {1} into cache", currencyFrom, currencyTo));
+    }
+
     private void createNewDetail(final CurrencyPairDetailIdentity detailIdentity) {
         final CurrencyPairDetail detail = new CurrencyPairDetail(detailIdentity, 1L);
         currencyService.createNewCurrencyPairDetail(detail);
@@ -139,18 +153,6 @@ public class CacheService {
     private void incrementExistingDetail(final CurrencyPairDetail detail) {
         detail.incrementCount();
         currencyService.updateCurrencyPairDetail(detail);
-    }
-
-    public List<CurrencyPair> listOfAllCurrencyPairs() {
-        final List<CurrencyPair> list = new ArrayList<>();
-
-        for (final String from : CURRENCY_PAIR_MAP.keySet()) {
-            for (final String to : CURRENCY_PAIR_MAP.get(from).keySet()) {
-                list.add(CURRENCY_PAIR_MAP.get(from).get(to));
-            }
-        }
-
-        return list;
     }
 
 }

@@ -12,9 +12,9 @@ public class ChartResponse {
     protected ChartResponse() {
     }
 
-    public ChartResponse(final String chartName) {
+    public ChartResponse(final String chartName, final List<String> labels) {
         this.chartName = chartName;
-        labels = new ArrayList<>();
+        this.labels = labels;
         datasets = new ArrayList<>();
     }
 

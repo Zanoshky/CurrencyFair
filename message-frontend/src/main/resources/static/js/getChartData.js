@@ -79,7 +79,7 @@ var userScript = (function () {
                 }
 
                 $.each(chartData, function (index, value) {
-                    charts[index] = new Chart(value.ctx).Bar(value.data, options);
+                    charts[index] = new Chart(value.ctx).Line(value.data, options);
                 });
 
             })
@@ -88,6 +88,10 @@ var userScript = (function () {
                 console.log("Request Failed: " + err);
             });
     };
+
+    setInterval(function () {
+        getChartData();
+    }, 10 * 1000);
 
     $("#line").click(function () {
         $.each(chartData, function (index, value) {
