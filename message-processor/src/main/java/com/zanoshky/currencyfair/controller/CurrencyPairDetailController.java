@@ -1,6 +1,7 @@
 package com.zanoshky.currencyfair.controller;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ import com.zanoshky.currencyfair.service.CacheService;
 @RequestMapping("/api")
 public class CurrencyPairDetailController {
 
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+
     @Autowired
     CacheService cacheService;
 
@@ -35,7 +38,9 @@ public class CurrencyPairDetailController {
      */
     @GetMapping("/currency-pair-charts-last-15-minutes")
     public List<ChartResponse> getAllCurrencyStatChartsLast15Minutes() {
+        // This is template for generic method for any period
         final long selectedMinutes = 15L;
+
         final LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         final LocalDateTime startTime = endTime.minusMinutes(selectedMinutes);
 
@@ -43,6 +48,7 @@ public class CurrencyPairDetailController {
         final List<String> timeIdLabels = generateTimeIdLabels(timeIds);
 
         final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSortForLastXMinutes(startTime, endTime);
+
         final List<ChartResponse> dtoResponse = new ArrayList<>();
 
         for (final CurrencyPair pair : cacheService.listOfAllCurrencyPairs()) {
@@ -89,7 +95,7 @@ public class CurrencyPairDetailController {
         final List<String> labelList = new ArrayList<>();
 
         for (final LocalDateTime minute : minuteList) {
-            labelList.add(minute.toString().replace('T', ' ').substring(11));
+            labelList.add(minute.format(TIME_FORMATTER));
         }
 
         return labelList;

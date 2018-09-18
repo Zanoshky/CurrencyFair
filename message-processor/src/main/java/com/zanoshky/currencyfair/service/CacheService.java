@@ -37,7 +37,7 @@ public class CacheService {
      * form of {@link ConcurrentMap}.
      */
     public void loadCurrencyPairsFromDbIntoMap() {
-        LOGGER.info("LOADING existing CurrencyPairs into cache");
+        LOGGER.info("Loading existing CurrencyPairs into cache");
 
         final List<CurrencyPair> currencyPairs = currencyService.findAllExistingCurrencyPairs();
 
@@ -55,7 +55,7 @@ public class CacheService {
             }
         }
 
-        LOGGER.info("LOADING existing CurrencyPairs into cache finished");
+        LOGGER.info("Loading existing CurrencyPairs into cache finished");
     }
 
     /**

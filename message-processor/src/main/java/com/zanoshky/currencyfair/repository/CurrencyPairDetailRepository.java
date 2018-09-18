@@ -13,10 +13,15 @@ import com.zanoshky.currencyfair.model.CurrencyPairDetailIdentity;
 public interface CurrencyPairDetailRepository extends JpaRepository<CurrencyPairDetail, CurrencyPairDetailIdentity> {
 
     /**
-     * Custom query which gathers all data from internal database about {@link CurrencyPairDetail} and performs custom sorting by time_id ASC and
-     * currency_pair_id ASC.
-     *
-     * @return {@link List} of {@link CurrencyPairDetail} in custom order, ordered by time_id ASC and currency_pair_id ASC.
+     * Custom query which gathers data between two dates from internal database about {@link CurrencyPairDetail} and performs custom sorting by
+     * time_id ASC and currency_pair_id ASC.
+     * 
+     * @param from
+     *            {@link LocalDateTime} value from when the query will start to return data
+     * @param to
+     *            {@link LocalDateTime} value up to when the query will end to return data
+     * @return @return {@link List} of {@link CurrencyPairDetail} in custom order, between specified dates, ordered by time_id ASC and
+     *         currency_pair_id ASC.
      */
     @Query(nativeQuery = true, value = "SELECT * FROM currency_pair_detail AS cpd WHERE cpd.time_id BETWEEN :from AND :to ORDER BY cpd.time_id ASC, cpd.currency_pair_id ASC")
     List<CurrencyPairDetail> findAllAndSortForLastXMinutes(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
