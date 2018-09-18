@@ -110,7 +110,7 @@ public class Message implements Serializable {
     }
 
     public Date getTimePlaced() {
-        return new Date(timePlaced.getTime());
+        return timePlaced;
     }
 
     public String getOriginatingCountry() {
