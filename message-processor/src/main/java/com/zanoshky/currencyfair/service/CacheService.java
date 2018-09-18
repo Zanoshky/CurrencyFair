@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import java.util.concurrent.ConcurrentMap;
 
 @Service
 public class CacheService {
-    public static final ConcurrentMap<String, ConcurrentMap<String, CurrencyPair>> CURRENCY_PAIR_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, ConcurrentMap<String, CurrencyPair>> CURRENCY_PAIR_MAP = new ConcurrentHashMap<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheService.class);
     private static String lastProcessedId = "0";
@@ -31,6 +30,10 @@ public class CacheService {
 
     @Autowired
     private RestClientService restClientService;
+
+    private static synchronized void updateLastProcessedId(final String id) {
+        lastProcessedId = id;
+    }
 
     /**
      * Method to connect to internal database and get all existing values of {@link CurrencyPair}. Retrieved values are loaded into {@link CacheService} which represents cache memory in
@@ -61,7 +64,7 @@ public class CacheService {
      * Method to trigger API call towards message-consumption service to gather all new {@link VolumeMessageDto} since last processed message.
      */
     public void triggerStatisticalSync() {
-        LOGGER.info(MessageFormat.format("Requesting message-consumption to GET all new messages since ID: {0}", lastProcessedId));
+        LOGGER.info("Requesting message-consumption to GET all new messages since ID: " + lastProcessedId);
         final List<VolumeMessageDto> volumeMessages = restClientService.getAllUnprocessedVolumeMessages(lastProcessedId);
 
         if (volumeMessages.isEmpty()) {
@@ -70,8 +73,8 @@ public class CacheService {
             final Long newLastId = processVolumeMessages(volumeMessages);
 
             if (newLastId != null) {
-                lastProcessedId = newLastId.toString();
-                LOGGER.info(MessageFormat.format("Last processed message is with ID: {0}", lastProcessedId));
+                updateLastProcessedId(newLastId.toString());
+                LOGGER.info("Last processed message is with ID: " + lastProcessedId);
             }
         }
     }
@@ -94,7 +97,7 @@ public class CacheService {
     }
 
     private Long processVolumeMessages(final List<VolumeMessageDto> volumeMessages) {
-        Long lastProcessedId = null;
+        Long processedId = null;
 
         for (final VolumeMessageDto message : volumeMessages) {
             // Transform the message's time to floored value which will be used as key
@@ -110,10 +113,10 @@ public class CacheService {
                 createNewDetail(detailIdentity);
             }
 
-            lastProcessedId = message.getId();
+            processedId = message.getId();
         }
 
-        return lastProcessedId;
+        return processedId;
     }
 
     private CurrencyPair processCurrencyPair(final String currencyFrom, final String currencyTo) {
@@ -137,12 +140,12 @@ public class CacheService {
     private void createNewConcurrentMapInCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
         CURRENCY_PAIR_MAP.put(currencyFrom, new ConcurrentHashMap<>());
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, currencyPair);
-        LOGGER.info(MessageFormat.format("Added {0} - {1} into cache", currencyFrom, currencyTo));
+        LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");
     }
 
     private void createNewEntryForCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair createdCurrencyPair) {
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, createdCurrencyPair);
-        LOGGER.info(MessageFormat.format("Added {0} - {1} into cache", currencyFrom, currencyTo));
+        LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");
     }
 
     private void createNewDetail(final CurrencyPairDetailIdentity detailIdentity) {

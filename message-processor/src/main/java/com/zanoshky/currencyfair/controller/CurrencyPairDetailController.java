@@ -24,10 +24,10 @@ public class CurrencyPairDetailController {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     @Autowired
-    CacheService cacheService;
+    private CacheService cacheService;
 
     @Autowired
-    CurrencyPairDetailRepository currencyPairDetailRepository;
+    private CurrencyPairDetailRepository currencyPairDetailRepository;
 
     /**
      * Method processes values of {@link CurrencyPairDetail} into statistical information about transactions volume per minute.

@@ -52,13 +52,6 @@ var userScript = (function () {
         }
     };
 
-    var createContainerNode = function () {
-        var $div = $("<div>", {
-            class: "container"
-        });
-        return $div;
-    };
-
     var getChartData = function () {
         var endpoint = "/view-all-currency-stat-charts";
         $.getJSON(endpoint)

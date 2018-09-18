@@ -15,10 +15,10 @@ import java.util.Optional;
 public class CurrencyService {
 
     @Autowired
-    CurrencyPairRepository currencyPairRepository;
+    private CurrencyPairRepository currencyPairRepository;
 
     @Autowired
-    CurrencyPairDetailRepository currencyPairDetailRepository;
+    private CurrencyPairDetailRepository currencyPairDetailRepository;
 
     public CurrencyPair createNewCurrencyPair(final String currencyFrom, final String currencyTo) {
         return currencyPairRepository.save(new CurrencyPair(currencyFrom, currencyTo));

@@ -7,6 +7,10 @@ This is a [proof-of-concept application](https://en.wikipedia.org/wiki/Proof_of_
 
 # Prerequisites
 - Manually connect to MySQL Server and create database with name **currency_fair** with type: **utf8_unicode_ci**
+- Manually create new user for database:
+    - username: **root** 
+    - password: **root** 
+    - rights: **ALL_RIGHTS**
 
 ## Functional Services
 CurrencyFair was decomposed into three core microservices. All of them are independently deployable applications, organized around certain business domains.
@@ -27,7 +31,7 @@ CurrencyFair was decomposed into three core microservices. All of them are indep
         - amountSell : Double (10,2)
         - amountBuy : Double (10,2)
         - rate : Double (10,5)
-        - timePlaced : TimeStamp (dd-MMM-yy HH:mm:ss)
+        - timePlaced : Date (dd-MMM-yy HH:mm:ss)
         - originatingCountry : String (2)
     - **Example**
     ```json
@@ -67,7 +71,7 @@ Approach taken:
 #### Message Processor Service API's
 Method	| Path	| Description	| User authenticated
 ------- | ----- | ------------- |:----------------:|
-GET     | /api/currency-pair-charts    | Returns all statistical information about currency pairs  | ×
+GET     | /api/currency-pair-charts-last-15-minutes | Returns all statistical information about currency pairs for last 15 minutes  | ×
 
 Approach taken:
 - [x] Average : Analyse incoming messages for trends, and transform data to prepare for a more visual frontend rendering, e.g. graphing currency volume of messages from one particular currency pair market (EUR/GBP).

@@ -18,7 +18,7 @@ import java.util.TimeZone;
 @EnableScheduling
 public class ProcessorApplication {
     @Autowired
-    CacheService cacheService;
+    private CacheService cacheService;
 
     public static void main(final String[] args) {
         SpringApplication.run(ProcessorApplication.class, args);
