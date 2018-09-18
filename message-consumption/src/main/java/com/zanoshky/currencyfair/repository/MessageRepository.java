@@ -17,7 +17,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      *
      * @param lastProcessedId
      *            Value which defines last processed ID, so the method will only return new unprocessed information.
-     * @return {@link List} of {@link VolumeMessage} which contains filetered information of {@link Message}.
+     * @return {@link List} of {@link VolumeMessage} which contains filtered information of {@link Message}.
      */
     @Query(nativeQuery = true, value = "SELECT id, currency_from AS currencyFrom, currency_to AS currencyTo, time_placed AS timePlaced FROM message m WHERE id > :lastProcessedId")
     List<VolumeMessage> findAllOnlyVolumeInfo(@Param("lastProcessedId") final Long lastProcessedId);

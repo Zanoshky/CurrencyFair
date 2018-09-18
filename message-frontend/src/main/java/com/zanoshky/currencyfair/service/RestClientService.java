@@ -13,7 +13,7 @@ import com.zanoshky.currencyfair.common.dto.ChartResponse;
 @Service
 public class RestClientService {
 
-    private static final String GET_ALL_URL = "http://localhost:8002/api/currency-pair-charts";
+    private static final String GET_ALL_URL = "http://localhost:8002/api/currency-pair-charts-last-15-minutes";
     private final RestTemplate restTemplate;
 
     @Autowired

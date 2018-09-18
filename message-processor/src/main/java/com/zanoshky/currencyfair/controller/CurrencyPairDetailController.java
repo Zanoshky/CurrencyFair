@@ -1,27 +1,26 @@
 package com.zanoshky.currencyfair.controller;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.zanoshky.currencyfair.common.dto.ChartResponse;
 import com.zanoshky.currencyfair.common.dto.Dataset;
 import com.zanoshky.currencyfair.model.CurrencyPair;
 import com.zanoshky.currencyfair.model.CurrencyPairDetail;
 import com.zanoshky.currencyfair.repository.CurrencyPairDetailRepository;
 import com.zanoshky.currencyfair.service.CacheService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class CurrencyPairDetailController {
-
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     CacheService cacheService;
@@ -35,77 +34,65 @@ public class CurrencyPairDetailController {
      *
      * @return {@link List} of {@link ChartResponse} which statisticaly information about {@link CurrencyPairDetail}.
      */
-    @GetMapping("/currency-pair-charts")
-    public List<ChartResponse> getAllCurrencyStatCharts() {
-        final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSort();
-        final List<ChartResponse> dtoList = new ArrayList<>();
-
-        Dataset dataset = null;
-        CurrencyPair currentPair = null;
-        ChartResponse currentChart = null;
-
-        for (final CurrencyPairDetail detail : detailList) {
-            if (currentPair != null && detail.getCurrencyPairDetailIdentity().getCurrencyPair().equals(currentPair.getId())) {
-                currentChart.getLabels().add(detail.getCurrencyPairDetailIdentity().getTimeId().toString());
-                dataset.getValue().add(detail.getCount());
-            } else {
-                if (currentChart != null) {
-                    // Add current chart to the response list before overwriting with new chart value
-                    dtoList.add(currentChart);
-                }
-
-                currentPair = detail.getCurrencyPair();
-
-                // Create new object empty chart response and set name
-                currentChart = new ChartResponse(formChartName(detail));
-                currentChart.getLabels().add(detail.getCurrencyPairDetailIdentity().getTimeId().toString());
-                dataset = new Dataset("First");
-                dataset.getValue().add(detail.getCount());
-                currentChart.getDatasets().add(dataset);
-            }
-        }
-
-        // Add current chart to the response list
-        dtoList.add(currentChart);
-        return dtoList;
-    }
-
     @GetMapping("/currency-pair-charts-last-15-minutes")
     public List<ChartResponse> getAllCurrencyStatChartsLast15Minutes() {
-        final List<String> timeIds = generateLastXWhereTimeIds(15L);
+        final long selectedMinutes = 15L;
+        final LocalDateTime endTime = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
+        final LocalDateTime startTime = endTime.minusMinutes(selectedMinutes);
 
-        final LocalDateTime from = parseDate(timeIds.get(0));
-        final LocalDateTime to = parseDate(timeIds.get(timeIds.size() - 1));
+        final List<LocalDateTime> timeIds = generateTimeIdsToCompare(startTime, selectedMinutes);
+        final List<String> timeIdLabels = generateTimeIdLabels(timeIds);
 
-        final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSortForLastXMinutes(from, to);
-        final List<ChartResponse> dtoList = new ArrayList<>();
+        final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSortForLastXMinutes(startTime, endTime);
+        final List<ChartResponse> dtoResponse = new ArrayList<>();
 
         for (final CurrencyPair pair : cacheService.listOfAllCurrencyPairs()) {
-            for (final CurrencyPairDetail detail : detailList) {
+            final ChartResponse currentChart = new ChartResponse(formChartName(pair));
+            currentChart.setLabels(timeIdLabels);
+            final Dataset dataset = new Dataset("First");
 
+            for (final LocalDateTime time : timeIds) {
+                long count = 0;
+
+                for (final CurrencyPairDetail detail : detailList) {
+                    if (detail.getCurrencyPair().equals(pair) && detail.getCurrencyPairDetailIdentity().getTimeId().equals(time)) {
+                        count = detail.getCount();
+                        break;
+                    }
+                }
+
+                dataset.getValue().add(count);
             }
+
+            currentChart.getDatasets().add(dataset);
+            dtoResponse.add(currentChart);
         }
 
-        return dtoList;
+        return dtoResponse;
     }
 
-    private String formChartName(final CurrencyPairDetail detail) {
-        return "Message volume of: " + detail.getCurrencyPair().getCurrencyFrom() + " -> "
-                + detail.getCurrencyPair().getCurrencyTo();
+    private String formChartName(final CurrencyPair pair) {
+        return "Message volume of: " + pair.getCurrencyFrom() + " -> "
+                + pair.getCurrencyTo();
     }
 
-    private List<String> generateLastXWhereTimeIds(final long fromMinutes) {
-        final LocalDateTime startTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).minusMinutes(fromMinutes);
-        final List<String> minutesInBetween = new ArrayList<>();
+    private List<LocalDateTime> generateTimeIdsToCompare(final LocalDateTime startTime, final long numberOfMinutes) {
+        final List<LocalDateTime> minuteList = new ArrayList<>();
 
-        for (long i = 0; i < fromMinutes; i++) {
-            minutesInBetween.add(startTime.plusMinutes(i).toString().replace('T', ' ') + ":00");
+        for (long i = 0; i < numberOfMinutes; i++) {
+            minuteList.add(startTime.plusMinutes(i));
         }
 
-        return minutesInBetween;
+        return minuteList;
     }
 
-    private LocalDateTime parseDate(final String date) {
-        return LocalDateTime.parse(date, formatter);
+    private List<String> generateTimeIdLabels(final List<LocalDateTime> minuteList) {
+        final List<String> labelList = new ArrayList<>();
+
+        for (final LocalDateTime minute : minuteList) {
+            labelList.add(minute.toString().replace('T', ' ').substring(11));
+        }
+
+        return labelList;
     }
 }

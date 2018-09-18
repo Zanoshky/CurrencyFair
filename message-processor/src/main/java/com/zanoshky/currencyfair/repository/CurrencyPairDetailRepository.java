@@ -1,13 +1,14 @@
 package com.zanoshky.currencyfair.repository;
 
-import com.zanoshky.currencyfair.model.CurrencyPairDetail;
-import com.zanoshky.currencyfair.model.CurrencyPairDetailIdentity;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import com.zanoshky.currencyfair.model.CurrencyPairDetail;
+import com.zanoshky.currencyfair.model.CurrencyPairDetailIdentity;
 
 public interface CurrencyPairDetailRepository extends JpaRepository<CurrencyPairDetail, CurrencyPairDetailIdentity> {
 
@@ -17,9 +18,6 @@ public interface CurrencyPairDetailRepository extends JpaRepository<CurrencyPair
      *
      * @return {@link List} of {@link CurrencyPairDetail} in custom order, ordered by time_id ASC and currency_pair_id ASC.
      */
-    @Query(nativeQuery = true, value = "SELECT * FROM currency_pair_detail AS cpd ORDER BY cpd.time_id ASC, cpd.currency_pair_id ASC")
-    List<CurrencyPairDetail> findAllAndSort();
-
     @Query(nativeQuery = true, value = "SELECT * FROM currency_pair_detail AS cpd WHERE cpd.time_id BETWEEN :from AND :to ORDER BY cpd.time_id ASC, cpd.currency_pair_id ASC")
     List<CurrencyPairDetail> findAllAndSortForLastXMinutes(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 

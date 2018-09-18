@@ -1,14 +1,5 @@
 package com.zanoshky.currencyfair.service;
 
-import com.zanoshky.currencyfair.dto.VolumeMessageDto;
-import com.zanoshky.currencyfair.model.CurrencyPair;
-import com.zanoshky.currencyfair.model.CurrencyPairDetail;
-import com.zanoshky.currencyfair.model.CurrencyPairDetailIdentity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -17,6 +8,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zanoshky.currencyfair.dto.VolumeMessageDto;
+import com.zanoshky.currencyfair.model.CurrencyPair;
+import com.zanoshky.currencyfair.model.CurrencyPairDetail;
+import com.zanoshky.currencyfair.model.CurrencyPairDetailIdentity;
 
 @Service
 public class CacheService {
@@ -32,7 +33,8 @@ public class CacheService {
     private RestClientService restClientService;
 
     /**
-     * Method to connect to internal database and get all existing values of {@link CurrencyPair}. Retrieved values are loaded into Cache memory in form of {@link ConcurrentMap}.
+     * Method to connect to internal database and get all existing values of {@link CurrencyPair}. Retrieved values are loaded into Cache memory in
+     * form of {@link ConcurrentMap}.
      */
     public void loadCurrencyPairsFromDbIntoMap() {
         LOGGER.info("LOADING existing CurrencyPairs into cache");
@@ -150,6 +152,5 @@ public class CacheService {
 
         return list;
     }
-
 
 }

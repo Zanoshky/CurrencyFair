@@ -28,19 +28,21 @@ public class MessageRepositoryIntegrationTest {
     @Test
     public void whenFindAllSinceLastId_thenReturnListOfVolumeMessages() {
         // given:
-        final Message first = new Message("1234567", "HRK", "EUR", 1000.0, 750.0, 0.75, new Date(), "HR");
-        final Message second = new Message("1234567", "HRK", "EUR", 1000.0, 750.0, 0.75, new Date(), "HR");
+        final String currencyFrom = "HRK";
+        final String currencyTo = "EUR";
+
+        final Message first = new Message("1234567", currencyFrom, currencyTo, 1000.0, 750.0, 0.75, new Date(), "HR");
 
         entityManager.persist(first);
-        entityManager.persist(second);
-
         entityManager.flush();
 
         // when:
         final List<VolumeMessage> found = messageRepository.findAllOnlyVolumeInfo(0L);
 
         // then:
-        assert found.size() == 2;
+        assert found.size() == 1;
+        assert found.get(0).getCurrencyFrom().equals(currencyFrom);
+        assert found.get(0).getCurrencyTo().equals(currencyTo);
     }
 
 }
