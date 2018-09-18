@@ -1,7 +1,6 @@
 package com.zanoshky.currencyfair.controller;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,7 @@ public class CurrencyPairDetailController {
     @GetMapping("/currency-pair-charts-last-15-minutes")
     public List<ChartResponse> getAllCurrencyStatChartsLast15Minutes() {
         final long selectedMinutes = 15L;
-        final LocalDateTime endTime = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
+        final LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         final LocalDateTime startTime = endTime.minusMinutes(selectedMinutes);
 
         final List<LocalDateTime> timeIds = generateTimeIdsToCompare(startTime, selectedMinutes);
