@@ -5,12 +5,35 @@
 
 This is a [proof-of-concept application](https://en.wikipedia.org/wiki/Proof_of_concept), which implements Market Trade Processor for company [CurrencyFair](https://www.currencyfair.com/) interview process by using Spring Boot and Docker.
 
-# Prerequisites
+# Prerequisites for development
 - Manually connect to MySQL Server and create database with name **currency_fair** with type: **utf8_unicode_ci**
 - Manually create new user for database:
     - username: **root** 
     - password: **root** 
     - rights: **ALL_RIGHTS**
+- Import project in IDE
+- Run **ConsumptionApplication.java** in IDE Run Configuration
+- Run **ProcessorApplication.java** in IDE Run Configuration
+- Run **FrontendApplication.java** in IDE Run Configuration
+
+# Prerequisites for deployment on Docker
+- Install [Docker Toolbox On Windows](https://docs.docker.com/toolbox/toolbox_install_windows/) if on Windows 7
+    - Use dockerhost IP address - default **192.168.99.100**
+- Install [Docker for Windows](https://docs.docker.com/docker-for-windows/install/#install-docker-for-windows-desktop-app) if on Windows 10
+    - You can use localhost
+- Open root folder of project
+- Execute
+    ```console
+    mvn clean install
+    ```
+- Change dir to
+    ```console
+    cd deployment/docker
+    ```
+- Execute 
+    ```console
+    docker-compose up --build
+    ```
 
 ## Functional Services
 CurrencyFair was decomposed into three core microservices. All of them are independently deployable applications, organized around certain business domains.
@@ -41,9 +64,9 @@ CurrencyFair was decomposed into three core microservices. All of them are indep
 #### Message Consumption Service API's
 Method	| Path	| Description	| User authenticated
 ------- | ----- | ------------- |:----------------:|
-GET	    | /api/messages	                         | Returns all information about all messages                                                               | ×
-GET	    | /api/volume-messages/{lastProcessedId} | Returns filtered information about messages (id, currencies, timestamp) greater then last processed ID   | ×
-POST    | /api/message	                         | Saves a trade message to the Market Trade Processor                                                      | ×
+GET	    | /api/messages	                         | Returns all information about all messages                                                               | 
+GET	    | /api/volume-messages/{lastProcessedId} | Returns filtered information about messages (id, currencies, timestamp) greater then last processed ID   | 
+POST    | /api/message	                         | Saves a trade message to the Market Trade Processor                                                      | 
 
 Approach taken:
 - [x] Easy : Consumed messages are written to disk for rendering in the frontend. 
@@ -71,7 +94,7 @@ Approach taken:
 #### Message Processor Service API's
 Method	| Path	| Description	| User authenticated
 ------- | ----- | ------------- |:----------------:|
-GET     | /api/currency-pair-charts-last-15-minutes | Returns all statistical information about currency pairs for last 15 minutes  | ×
+GET     | /api/currency-pair-charts-last-15-minutes | Returns all statistical information about currency pairs for last 15 minutes  | 
 
 Approach taken:
 - [x] Average : Analyse incoming messages for trends, and transform data to prepare for a more visual frontend rendering, e.g. graphing currency volume of messages from one particular currency pair market (EUR/GBP).
