@@ -1,0 +1,23 @@
+version: '2.1'
+
+services:
+  mysql:
+    image: mysql:5.7
+    ports:
+    - 3306:3306
+    environment:
+    - MYSQL_DATABASE=currency_fair
+    - MYSQL_USER=test
+    - MYSQL_PASSWORD=root
+    - MYSQL_ROOT_PASSWORD=root
+  message-consumption:
+    build: ./message-consumption
+    ports:
+    - 8001:8001
+    environment:
+    - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/currency_fair?useSSL=false
+    - SPRING_DATASOURCE_USERNAME=test
+    - SPRING_DATASOURCE_PASSWORD=root
+    - SPRING_DATASOURCE_GENERATE-DDL=true
+    - SPRING_DATASOURCE_INITIALIZATION-MODE=always
+    - SPRING_JPA_DATABASE=mysql

@@ -17,6 +17,7 @@
         <module>message-processor</module>
         <module>message-frontend</module>
         <module>common</module>
+        <module>deployment</module>
     </modules>
 
     <properties>
@@ -38,5 +39,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
 </project>
