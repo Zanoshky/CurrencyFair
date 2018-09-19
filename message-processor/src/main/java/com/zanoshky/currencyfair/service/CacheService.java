@@ -12,15 +12,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 @Service
 public class CacheService {
-    private static final ConcurrentMap<String, ConcurrentMap<String, CurrencyPair>> CURRENCY_PAIR_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, CurrencyPair>> CURRENCY_PAIR_MAP = new HashMap<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheService.class);
     private static String lastProcessedId = "0";
@@ -37,7 +36,7 @@ public class CacheService {
 
     /**
      * Method to connect to internal database and get all existing values of {@link CurrencyPair}. Retrieved values are loaded into {@link CacheService} which represents cache memory in
-     * form of {@link ConcurrentMap}.
+     * form of {@link Map}.
      */
     public void loadCurrencyPairsFromDbIntoMap() {
         LOGGER.info("Loading existing CurrencyPairs into cache");
@@ -47,7 +46,7 @@ public class CacheService {
             final Map<String, CurrencyPair> existingMap = CURRENCY_PAIR_MAP.get(pair.getCurrencyFrom());
 
             if (existingMap == null) {
-                createNewConcurrentMapInCacheAndAddPair(pair.getCurrencyFrom(), pair.getCurrencyTo(), pair);
+                createNewMapInCacheAndAddPair(pair.getCurrencyFrom(), pair.getCurrencyTo(), pair);
             } else {
                 final CurrencyPair existingPair = CURRENCY_PAIR_MAP.get(pair.getCurrencyFrom()).get(pair.getCurrencyTo());
 
@@ -80,9 +79,9 @@ public class CacheService {
     }
 
     /**
-     * Method goes trues {@link ConcurrentMap} in-memory cache and gets each instance of {@link CurrencyPair}.
+     * Method goes trues {@link Map} in-memory cache and gets each instance of {@link CurrencyPair}.
      *
-     * @return {@link List} interface of {@link ArrayList} containts each value of {@link CurrencyPair} loaded in-memory cache.
+     * @return {@link List} interface of {@link ArrayList} contains each value of {@link CurrencyPair} loaded in-memory cache.
      */
     public List<CurrencyPair> listOfAllCurrencyPairs() {
         final List<CurrencyPair> list = new ArrayList<>();
@@ -124,7 +123,7 @@ public class CacheService {
 
         if (fromMap == null) {
             final CurrencyPair currencyPair = currencyService.createNewCurrencyPair(currencyFrom, currencyTo);
-            createNewConcurrentMapInCacheAndAddPair(currencyFrom, currencyTo, currencyPair);
+            createNewMapInCacheAndAddPair(currencyFrom, currencyTo, currencyPair);
         } else {
             final CurrencyPair currencyPair = CURRENCY_PAIR_MAP.get(currencyFrom).get(currencyTo);
 
@@ -137,8 +136,8 @@ public class CacheService {
         return CURRENCY_PAIR_MAP.get(currencyFrom).get(currencyTo);
     }
 
-    private void createNewConcurrentMapInCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
-        CURRENCY_PAIR_MAP.put(currencyFrom, new ConcurrentHashMap<>());
+    private void createNewMapInCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
+        CURRENCY_PAIR_MAP.put(currencyFrom, new HashMap<>());
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, currencyPair);
         LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");
     }
