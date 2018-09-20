@@ -37,7 +37,7 @@ public class MessageRepositoryIntegrationTest {
         entityManager.flush();
 
         // when:
-        final List<VolumeMessage> found = messageRepository.findAllOnlyVolumeInfo(0L);
+        final List<VolumeMessage> found = messageRepository.findAllVolumeMessagesAboveId(0L);
 
         // then:
         assert found.size() == 1;

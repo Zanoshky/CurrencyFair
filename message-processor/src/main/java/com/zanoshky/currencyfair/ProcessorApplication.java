@@ -1,6 +1,9 @@
 package com.zanoshky.currencyfair;
 
-import com.zanoshky.currencyfair.service.CacheService;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,8 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import java.util.TimeZone;
+import com.zanoshky.currencyfair.service.CacheService;
 
 @SpringBootApplication
 @EnableScheduling

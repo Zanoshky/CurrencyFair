@@ -14,13 +14,15 @@ import com.zanoshky.currencyfair.dto.VolumeMessageDto;
 public class RestClientService {
 
     private static final String SYSTEM_VAR = System.getenv("message_consumption_api");
+    private static final String API_URL = "/api/volume-messages/above/";
+    private static final String HTTP = "http://";
     private static final String GET_URL_BY_ID;
 
     static {
         if (SYSTEM_VAR == null) {
-            GET_URL_BY_ID = "http://localhost:8001/api/volume-messages/";
+            GET_URL_BY_ID = HTTP + "localhost:8001" + API_URL;
         } else {
-            GET_URL_BY_ID = "http://" + SYSTEM_VAR + "/api/volume-messages/";
+            GET_URL_BY_ID = HTTP + SYSTEM_VAR + API_URL;
         }
     }
 

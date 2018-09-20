@@ -14,13 +14,15 @@ import com.zanoshky.currencyfair.common.dto.ChartResponse;
 public class RestClientService {
 
     private static final String SYSTEM_VAR = System.getenv("message_processor_api");
+    private static final String API_URL = "/api/charts-for-last-minutes/15";
+    private static final String HTTP = "http://";
     private static final String GET_ALL_URL;
 
     static {
         if (SYSTEM_VAR == null) {
-            GET_ALL_URL = "http://localhost:8002/api/currency-pair-charts-last-15-minutes";
+            GET_ALL_URL = HTTP + "localhost:8002" + API_URL;
         } else {
-            GET_ALL_URL = "http://" + SYSTEM_VAR + "/api/currency-pair-charts-last-15-minutes";
+            GET_ALL_URL = HTTP + SYSTEM_VAR + API_URL;
         }
     }
 
