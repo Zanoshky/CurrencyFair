@@ -84,7 +84,7 @@ var userScript = (function () {
 
     setInterval(function () {
         getChartData();
-    }, 10 * 1000);
+    }, 60 * 1000);
 
     $("#line").click(function () {
         $.each(chartData, function (index, value) {

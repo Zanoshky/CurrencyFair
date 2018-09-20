@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,19 +32,18 @@ public class ChartResponseController {
 
     /**
      * Method processes values of {@link CurrencyPairDetail} into statistical information about transactions volume per minute.
-     *
-     * @return {@link List} of {@link ChartResponse} which presents statistical information about transactions volume per minute for specific
-     *         {@link CurrencyPair}.
+     * 
+     * @param numberOfMinutes
+     *            Parameter specifies how many previous minutes is going to get processed
+     * @return {@link List} of {@link ChartResponse} which presents statistical information about transactions volume per minute for all
+     *         {@link CurrencyPair}'s.
      */
-    @GetMapping("/charts-for-last-minutes/{currencyPairId:[\\d]+}")
-    public List<ChartResponse> getAllCurrencyStatChartsLast15Minutes() {
-        // This is template for generic method for any period
-        final long selectedMinutes = 15L;
-
+    @GetMapping("/charts-for-last-minutes/{numberOfMinutes:[\\d]+}")
+    public List<ChartResponse> getAllCurrencyStatChartsLast15Minutes(@PathVariable("numberOfMinutes") final long numberOfMinutes) {
         final LocalDateTime endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-        final LocalDateTime startTime = endTime.minusMinutes(selectedMinutes);
+        final LocalDateTime startTime = endTime.minusMinutes(numberOfMinutes);
 
-        final List<LocalDateTime> timeIds = TimeIdHelper.generateTimeIdsToCompare(startTime, selectedMinutes);
+        final List<LocalDateTime> timeIds = TimeIdHelper.generateTimeIdsToCompare(startTime, numberOfMinutes);
         final List<String> timeIdLabels = TimeIdHelper.generateTimeIdLabels(timeIds);
 
         final List<CurrencyPairDetail> detailList = currencyPairDetailRepository.findAllAndSortForLastXMinutes(startTime, endTime);

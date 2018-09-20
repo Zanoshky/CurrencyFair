@@ -1,14 +1,5 @@
 package com.zanoshky.currencyfair.service;
 
-import com.zanoshky.currencyfair.dto.VolumeMessageDto;
-import com.zanoshky.currencyfair.model.CurrencyPair;
-import com.zanoshky.currencyfair.model.CurrencyPairDetail;
-import com.zanoshky.currencyfair.model.CurrencyPairDetailIdentity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -16,6 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zanoshky.currencyfair.dto.VolumeMessageDto;
+import com.zanoshky.currencyfair.model.CurrencyPair;
+import com.zanoshky.currencyfair.model.CurrencyPairDetail;
+import com.zanoshky.currencyfair.model.CurrencyPairDetailIdentity;
 
 @Service
 public class CacheService {
@@ -35,8 +36,8 @@ public class CacheService {
     }
 
     /**
-     * Method to connect to internal database and get all existing values of {@link CurrencyPair}. Retrieved values are loaded into {@link CacheService} which represents cache memory in
-     * form of {@link Map}.
+     * Method to connect to internal database and get all existing values of {@link CurrencyPair}. Retrieved values are loaded into
+     * {@link CacheService} which represents cache memory in form of {@link Map}.
      */
     public void loadCurrencyPairsFromDbIntoMap() {
         LOGGER.info("Loading existing CurrencyPairs into cache");
@@ -63,7 +64,8 @@ public class CacheService {
      * Method to trigger API call towards message-consumption service to gather all new {@link VolumeMessageDto} since last processed message.
      */
     public void triggerStatisticalSync() {
-        LOGGER.info("Requesting message-consumption to GET all new messages since ID: " + lastProcessedId);
+        LOGGER.info("Requesting message-consumption to GET all new messages since ID: {}", lastProcessedId);
+
         final List<VolumeMessageDto> volumeMessages = restClientService.getAllUnprocessedVolumeMessages(lastProcessedId);
 
         if (volumeMessages.isEmpty()) {
@@ -73,7 +75,7 @@ public class CacheService {
 
             if (newLastId != null) {
                 updateLastProcessedId(newLastId.toString());
-                LOGGER.info("Last processed message is with ID: " + lastProcessedId);
+                LOGGER.info("Last processed message is with ID: {}", lastProcessedId);
             }
         }
     }
@@ -139,12 +141,12 @@ public class CacheService {
     private void createNewMapInCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair currencyPair) {
         CURRENCY_PAIR_MAP.put(currencyFrom, new HashMap<>());
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, currencyPair);
-        LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");
+        LOGGER.info("Added {} {} into cache", currencyFrom, currencyTo);
     }
 
     private void createNewEntryForCacheAndAddPair(final String currencyFrom, final String currencyTo, final CurrencyPair createdCurrencyPair) {
         CURRENCY_PAIR_MAP.get(currencyFrom).put(currencyTo, createdCurrencyPair);
-        LOGGER.info("Added " + currencyFrom + " - " + currencyTo + " into cache");
+        LOGGER.info("Added {} {} into cache", currencyFrom, currencyTo);
     }
 
     private void createNewDetail(final CurrencyPairDetailIdentity detailIdentity) {

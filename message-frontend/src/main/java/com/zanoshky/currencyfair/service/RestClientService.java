@@ -18,6 +18,8 @@ public class RestClientService {
     private static final String HTTP = "http://";
     private static final String GET_ALL_URL;
 
+    // Static block sets contact API URL
+    // This is due to work in development environment / docker deployment
     static {
         if (SYSTEM_VAR == null) {
             GET_ALL_URL = HTTP + "localhost:8002" + API_URL;

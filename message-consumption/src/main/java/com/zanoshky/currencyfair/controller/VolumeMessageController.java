@@ -18,14 +18,14 @@ public class VolumeMessageController {
     @Autowired
     private MessageRepository messageRepository;
 
-    @GetMapping("/volume-messages")
-    public List<VolumeMessage> getAllVolumeMessage() {
-        return messageRepository.findAllVolumeMessages();
-    }
-
     @GetMapping("/volume-message/{volumeMessageId:[\\d]+}")
     public VolumeMessage getVolumeMessageById(@PathVariable("volumeMessageId") final long volumeMessageId) {
         return messageRepository.findVolumeMessageById(volumeMessageId);
+    }
+
+    @GetMapping("/volume-messages")
+    public List<VolumeMessage> getAllVolumeMessage() {
+        return messageRepository.findAllVolumeMessages();
     }
 
     @GetMapping("/volume-messages/above/{lastProcessedId:[\\d]+}")
