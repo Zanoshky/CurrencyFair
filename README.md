@@ -60,6 +60,9 @@ CurrencyFair was decomposed into three core microservices. All of them are indep
     ```json
     {"userId": "134256", "currencyFrom": "EUR", "currencyTo": "GBP", "amountSell": 1000, "amountBuy": 747.10, "rate": 0.7471, "timePlaced" : "24-JAN-15 10:27:44", "originatingCountry" : "FR"}
     ```
+- Swagger2 API Documentation:
+    - http://localhost:8001/swagger-ui.html
+    - http://192.168.99.100:8001/swagger-ui.html
 
 #### Message Consumption Service API's
 Method	| Path	| Description	| User authenticated
@@ -93,6 +96,9 @@ Approach taken:
     {"id": "134256", "currencyFrom": "EUR", "currencyTo": "GBP", "timePlaced" : "2014-12-28T10:27:44.000+0000"}
     ```
 - Service exposes POST API for **Message-Frontend** to provide calculated statistical data about currency pair volumes.
+- Swagger2 API Documentation:
+    - http://localhost:8002/swagger-ui.html
+    - http://192.168.99.100:8002/swagger-ui.html
 
 #### Message Processor Service API's
 Method	| Path	| Description	| User authenticated
@@ -110,6 +116,9 @@ Approach taken:
 - Service is running on port 8080.
 - Frontend microservice for communication between remaining microservices.
 - Service communicates with **Message-Processor** to get statistical information about messages from its database.
+- Swagger2 API Documentation:
+    - http://localhost:8080/swagger-ui.html
+    - http://192.168.99.100:8080/swagger-ui.html
 
 Approach taken:
 - [x] Average : Render a graph of processed data from the messages consumed.
