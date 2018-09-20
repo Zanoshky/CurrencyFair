@@ -64,9 +64,12 @@ CurrencyFair was decomposed into three core microservices. All of them are indep
 #### Message Consumption Service API's
 Method	| Path	| Description	| User authenticated
 ------- | ----- | ------------- |:----------------:|
-GET	    | /api/messages	                         | Returns all information about all messages                                                               | 
-GET	    | /api/volume-messages/{lastProcessedId} | Returns filtered information about messages (id, currencies, timestamp) greater then last processed ID   | 
-POST    | /api/message	                         | Saves a trade message to the Market Trade Processor                                                      | 
+GET	    | /api/message/{messageId}	                   | Returns all information about Message for given Message ID                               |
+GET	    | /api/messages	                               | Returns all information about all Messages                                               |
+POST    | /api/message	                               | Saves a trade message to the Market Trade Processor                                      |
+GET	    | /api/volume-message/{volumeMessageId}        | Returns filtered information (id, currencies, timestamp) for given Volume Message ID     |
+GET	    | /api/volume-messages                         | Returns filtered information (id, currencies, timestamp) for all Messages                |
+GET	    | /api/volume-messages/above/{lastProcessedId} | Returns filtered information (id, currencies, timestamp) for all Messages above given ID |
 
 Approach taken:
 - [x] Easy : Consumed messages are written to disk for rendering in the frontend. 
@@ -94,7 +97,10 @@ Approach taken:
 #### Message Processor Service API's
 Method	| Path	| Description	| User authenticated
 ------- | ----- | ------------- |:----------------:|
-GET     | /api/currency-pair-charts-last-15-minutes | Returns all statistical information about currency pairs for last 15 minutes  | 
+GET	    | /api/currency-pair/{currencyPairId}	         | Returns all information about Currency Pair for given ID                    |
+GET	    | /api/currency-pairs	                         | Returns all information about all Currency Pairs                            |
+GET	    | /api/currency-pair-details	                 | Returns all information about all Currency Pair Details                     |
+GET     | /api//charts-for-last-minutes/{numberOfMinutes}| Returns statistical information about currency pairs for last given minutes |
 
 Approach taken:
 - [x] Average : Analyse incoming messages for trends, and transform data to prepare for a more visual frontend rendering, e.g. graphing currency volume of messages from one particular currency pair market (EUR/GBP).
