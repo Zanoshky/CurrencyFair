@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zanoshky.currencyfair.exception.ResourceNotFoundException;
 import com.zanoshky.currencyfair.model.Message;
 import com.zanoshky.currencyfair.repository.MessageRepository;
 
@@ -24,7 +25,9 @@ public class MessageController {
 
     @GetMapping("/message/{messageId:[\\d]+}")
     public Message getMessage(@PathVariable("messageId") final long messageId) {
-        return messageRepository.findById(messageId).orElse(null);
+        return messageRepository
+                .findById(messageId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("id-%d", messageId)));
     }
 
     @GetMapping("/messages")

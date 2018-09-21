@@ -1,6 +1,7 @@
 package com.zanoshky.currencyfair.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +18,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @return {@link VolumeMessage} which contains filtered information of {@link Message}.
      */
     @Query(nativeQuery = true, value = "SELECT id, currency_from AS currencyFrom, currency_to AS currencyTo, time_placed AS timePlaced FROM message m WHERE id = :volumeMessageId")
-    VolumeMessage findVolumeMessageById(@Param("volumeMessageId") final Long volumeMessageId);
+    Optional<VolumeMessage> findVolumeMessageById(@Param("volumeMessageId") final Long volumeMessageId);
 
     /**
      * Custom query which connects to internal DB and gathers filtered information about all {@link Message}'s.

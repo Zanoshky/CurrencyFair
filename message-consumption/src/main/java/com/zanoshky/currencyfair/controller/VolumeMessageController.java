@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zanoshky.currencyfair.common.dto.VolumeMessage;
+import com.zanoshky.currencyfair.exception.ResourceNotFoundException;
 import com.zanoshky.currencyfair.repository.MessageRepository;
 
 @RestController
@@ -20,7 +21,9 @@ public class VolumeMessageController {
 
     @GetMapping("/volume-message/{volumeMessageId:[\\d]+}")
     public VolumeMessage getVolumeMessageById(@PathVariable("volumeMessageId") final long volumeMessageId) {
-        return messageRepository.findVolumeMessageById(volumeMessageId);
+        return messageRepository
+                .findVolumeMessageById(volumeMessageId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("id-%d", volumeMessageId)));
     }
 
     @GetMapping("/volume-messages")
